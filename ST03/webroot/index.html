@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!-- see https://storybook.core.clarity.design/?path=/story/layout-spacing--page for the layout help-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Clarity Core - Snowpack App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body cds-text="body bodypadding" cds-theme="dark"> <!-- cds-layout="p:lg"  -->
+
+    <div class="demo-layout">
+      <header class="demo-header" cds-layout="p:md p@sm:lg">
+        <h1>Positionierung</h1>
+      </header>
+
+      <div cds-layout="gap:md gap@md:xl p@sm:xl p-x:lg p-b:sm container:xl container:center"><!-- p-y@lg:xxl -->
+
+        <!-- Parameters -->
+        </br>
+        <div cds-layout="vertical col@sm:7">
+          <h2 cds-text="headline">Parameter <cds-badge aria-label="notification 12" status="danger">admin</cds-badge></h2>
+          <br/>
+          <div class="workspacecontainer">
+            <div><label>Workspace</label></div>
+            <div><input id="inpWorkspace" type="text" readonly></div>
+            <div><label>Name</label></div>
+            <div><input id="inpPosName" type="text" readonly></div>
+          </div>
+          <br/>
+          <div class="btn-group btn-primary">
+            <cds-button id="btnTol1" status="primary">Zylinder</cds-button>
+            <cds-button id="btnTol2" status="primary" action="outline">Kugel</cds-button>
+            <cds-button id="btnTol3" status="primary" action="outline">Kegelstumpf</cds-button>
+          </div>
+          <img id="imgTol" height="220px" src="cylinder.png" />
+          <br />
+          <div class="inputcontainer">
+            <!-- todo: prevent chaning from user -->
+            <div style="grid-column: 1"><label>Radius [mm]</label></div>
+            <div><input id="inpRadius" type="number"></div>
+            <div style="grid-column: 1"><label>Höhe [mm]</label></div>
+            <div><input id="inpHeight" type="number"></div>
+            <div style="grid-column: 1"><label>Offset [mm]</label></div>
+            <div><input id="inpOffset" type="number"></div>
+            <cds-button hidden style="grid-column: 3; grid-row-start: 1; grid-row-end: 3" id="btnTolSave" status="primary" action="outline">Save</cds-button>
+          </div>
+          <br />
+          <div class="container3D">
+            <div><label>X/Y/Z [mm]</label></div>
+            <div><input id="txtCfgPosX" type="number" readonly></div>
+            <div><input id="txtCfgPosY" type="number" readonly></div>
+            <div><input id="txtCfgPosZ" type="number" readonly></div>
+            <div><label>Winkel [°]</label></div>
+            <div><input id="txtCfgRadX" type="number" readonly></div>
+            <div><input id="txtCfgRadY" type="number" readonly></div>
+            <div><input id="txtCfgRadZ" type="number" readonly></div>
+          </div>
+        </div>
+
+        </br>
+        <cds-divider></cds-divider>
+
+        <!-- Tolerance -->
+        </br>
+        <div cds-layout="vertical col@sm:7">
+          <h2 cds-text="headline">Aktuelle Position</h2>
+          <br/>
+          <div class="container3D">
+            <div><label>X/Y/Z [mm]</label></div>
+            <div><input id="txtActPosX" type="number" readonly></div>
+            <div><input id="txtActPosY" type="number" readonly></div>
+            <div><input id="txtActPosZ" type="number" readonly></div>
+            <div><label>Winkel [°]</label></div>
+            <div><input id="txtActRadX" type="number" readonly></div>
+            <div><input id="txtActRadY" type="number" readonly></div>
+            <div><input id="txtActRadZ" type="number" readonly></div>
+            <div><label>delta [mm]</label></div>
+            <div><input id="txtDeltaPosX" type="number" readonly></div>
+            <div><input id="txtDeltaPosY" type="number" readonly></div>
+            <div><input id="txtDeltaPosZ" type="number" readonly></div>
+            <div><label>delta [°]</label></div>
+            <div><input id="txtDeltaRadX" type="number" readonly></div>
+            <div><input id="txtDeltaRadY" type="number" readonly></div>
+            <div><input id="txtDeltaRadZ" type="number" readonly></div>
+            <div><label>InPos</label></div>
+            <div><input id="txtInPos" type="text" readonly></div>
+          </div>
+        </div>
+
+        </br>
+        <cds-divider></cds-divider>
+
+        <!-- AGV (admin only) -->
+        </br>
+        <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
+          <h2 cds-text="headline">Tracking info</h2>
+          <div class="workspacecontainer">
+            <div><label>Status</label></div>
+            <div><input id="txtStatus" type="text" readonly></div>
+          </div>
+          <div cds-layout="grid gap:xs container:xl container:center">
+            <!-- row 1: 2-columns for state/speed -->
+            <div cds-layout="col:3">
+              <!--<div>Target station</div>
+              <cds-select control-width="stretch">
+                <select id="agv_number" style="width: 100%">
+                  <option value="1">Station 1</option>
+                  <option value="2">Station 2</option>
+                  <option value="3">Station 3</option>
+                </select>
+              </cds-select>-->
+            </div>
+            <div cds-layout="col:1">
+            </div>
+            <div cds-layout="col:8">
+              <!--</br>
+              <cds-button id="agv_send" status="primary">Send to station</cds-button>-->
+              <cds-button id="btnRef" status="primary" tabindex="0" role="button" action="solid" size="md" loading-state="default" aria-disabled="false">Reference</cds-button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <cds-alert-group status="danger" hidden>
+        <cds-alert closable>
+          General Kenobi. You are a bold one.
+        </cds-alert>
+      </cds-alert-group>
+
+    </div>
+    <script type="module" src="/_dist_/index.js"></script>
+  </body>
+</html>

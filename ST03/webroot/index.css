@@ -1,0 +1,72 @@
+@import "./_snowpack/pkg/normalize.css/normalize.css";
+@import "./_snowpack/pkg/@cds/core/global.min.css";
+@import "./_snowpack/pkg/@cds/city/css/bundles/default.min.css";
+
+@import "./_snowpack/pkg/@cds/core/styles/theme.dark.min.css";
+@import '@clr/icons/clr-icons.min.css'
+
+/*@import 'blueprint-css/dist/blueprint.min.css'*/
+
+body {
+}
+
+.bodypadding {
+  padding: 0 0 0 0 !important;
+}
+
+.demo-layout {
+    margin: 0px;
+}
+.sbdocs {
+    box-shadow: 0.05rem 0.1rem 0.3rem 0.3rem hsl(0deg 0% 80%);
+    margin: 0;
+}
+
+.demo-header {
+    background: var(--cds-global-color-blue-1000);
+    color: var(--cds-global-color-gray-0);
+    margin: 0;
+    padding: 5px 20px 5px 20px !important;
+}
+
+.colorize-pink {
+  filter: brightness(0.5) sepia(1) hue-rotate(-70deg) saturate(5);
+}
+
+.colorize-navy {
+  filter: brightness(0.2) sepia(1) hue-rotate(180deg) saturate(5);
+}
+
+.colorize-blue {
+  filter: brightness(0.5) sepia(1) hue-rotate(140deg) saturate(6);
+}
+
+.container3D {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 1fr 1fr 1fr;
+  font-size: 18px;
+}
+.container3D input {
+  max-width: 80px;
+  background-color: lightgray
+}
+
+.inputcontainer {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 2fr 2fr;
+  font-size: 18px;
+}
+.inputcontainer input {
+  max-width: 100px
+}
+
+.workspacecontainer {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) 3fr;
+  font-size: 18px;
+}
+.workspacecontainer input {
+  width: 100%;
+  background-color: lightgray
+}
+

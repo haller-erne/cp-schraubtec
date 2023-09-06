@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Quality report</title>
+</head>
+
+<body>
+  <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <div id='stars'></div>
+  <div>
+      <span>
+        Quality report
+      </span>
+      <br>
+      <label for="name">Kommentar:</label>
+      <input type="text" id="qctext" required size="150">
+      <br> 
+      <input type="button" id="qcbutton" value="Speichern" disabled>
+  </div>
+  <div>
+      <span>OGS Version</span><span id="version">V3.0</span>
+      <span>Instance</span><span id="instance"></span>
+  </div>
+</div>
+</body>
+<script>
+console.log("loading...");
+var OGSMessage = null;
+const qcbutton = document.getElementById("qcbutton");
+const qctext = document.getElementById("qctext");
+const testbutton = document.getElementById("testbutton");
+window.onload = function DocLoaded() { 
+	console.log("document loaded.");
+	qcbutton.addEventListener('click', qcbutton_click);
+	qctext.addEventListener('input', qctext_changed);
+	testbutton.addEventListener('click', testbutton_click);
+	
+	var e = document.getElementById("instance");
+	e.textContent = getBridgeName();	// injected by OGS	
+}
+function testbutton_click(event)
+{
+	//window.addEventListener('DOMContentLoaded', (event) => {
+	  window.chrome.webview.postMessage('{ "event":"DOMContentLoaded"}');
+	//});
+}
+function qctext_changed(event)
+{
+    let txt = qctext.value;
+    qcbutton.disabled = (txt.length == 0);      // enable/dsiable the button
+}
+function qcbutton_click(event)
+{
+    let txt = qctext.value;
+	sendOgsCommand('{ "cmd":"save", "data":"'+ txt + '" }');
+}
+
+function sendOgsCommand(cmd)
+{
+	// send a command to OGS	
+	if (!window.chrome || !window.chrome.webview
+	 || !window.chrome.webview.hostObjects
+	 || !window.chrome.webview.hostObjects.sync) {
+		return;
+	}
+	let ogs = window.chrome.webview.hostObjects.sync.SidePanel;
+	if (ogs) {
+		var e = document.getElementById("version");
+		ogs.ObjectMessage = cmd;	
+	}
+}
+function setVersion(val)
+{
+	console.log("setting version:", val);
+	var e = document.getElementById("version");
+	e.textContent = val;
+}
+function initOGSMessaging()
+{
+	var timer = window.setInterval( () => {
+		console.log("checking bridge...");
+		if (!window.chrome || !window.chrome.webview
+		 || !window.chrome.webview.hostObjects
+		 || !window.chrome.webview.hostObjects.sync) {
+			return;
+		}
+		let ogs = window.chrome.webview.hostObjects.sync.SidePanel;
+		if (ogs) {
+			var e = document.getElementById("version");
+			var msg = ogs.ObjectMessage;
+			OGSMessage = msg;
+			console.log("Bridge running!", msg);
+			e.textContent = msg;
+			clearInterval(timer);
+			sendOgsCommand('{ "cmd":"get-version" }');
+			// add other events
+
+		} else {
+			console.log("... not available yet.");
+		}
+	}, 100);
+}
+initOGSMessaging();
+</script>
+</html>
+

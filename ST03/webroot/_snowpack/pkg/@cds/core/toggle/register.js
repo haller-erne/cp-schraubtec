@@ -1,0 +1,15 @@
+import { A, c } from '../../../common/register-12bcd2e7.js';
+import { i, _ as __decorate, m, w } from '../../../common/index-b0c4d8f8.js';
+import '../../../common/register-c5e2ae4d.js';
+import '../../../common/icon.service-40281976.js';
+import '../../../common/lit-b10e491c.js';
+import '../../../common/button.base-8353e908.js';
+import '../../../common/event-1932d824.js';
+
+class r extends A{}
+
+var r$1=i`:host{--background:var(--cds-alias-status-neutral, var(--cds-global-color-construction-600, #4f6169));--border:var(--cds-alias-object-border-width-200, calc(2 / var(--cds-global-base, 20) * 1rem)) solid var(--background);--border-radius:var(--cds-alias-object-border-radius-200, calc(12 / var(--cds-global-base, 20) * 1rem));--height:var(--cds-global-space-8, calc(18 / var(--cds-global-base, 20) * 1rem));--width:calc(var(--cds-global-space-10, calc(32 / var(--cds-global-base, 20) * 1rem)) + var(--cds-global-space-1, calc(1 / var(--cds-global-base, 20) * 1rem)));--anchor-background:var(--cds-global-color-construction-50, #f1f6f8);--anchor-border-radius:var(--cds-alias-object-border-radius-200, calc(12 / var(--cds-global-base, 20) * 1rem));--anchor-width:calc(var(--cds-global-space-6, calc(12 / var(--cds-global-base, 20) * 1rem)) + var(--cds-global-space-2, calc(2 / var(--cds-global-base, 20) * 1rem)));--anchor-height:calc(var(--cds-global-space-6, calc(12 / var(--cds-global-base, 20) * 1rem)) + var(--cds-global-space-2, calc(2 / var(--cds-global-base, 20) * 1rem)));--toggle-speed:var(--cds-global-animation-duration-quicker, 0.15s)}.input,.input:after{display:inline-block;transition-duration:var(--toggle-speed,.15s);transition-timing-function:ease-in}.input{border-radius:var(--border-radius);border:var(--border);background:var(--background);height:var(--height);width:var(--width);position:relative;cursor:pointer;transition-property:border-color,background-color}.input:after{border-radius:var(--anchor-border-radius);background:var(--anchor-background);height:var(--anchor-height);width:var(--anchor-width);position:absolute;content:"";left:0;top:0;transition-property:transform}:host(:not([cds-motion=ready])){--toggle-speed:0}:host([_checked]){--background:var(--cds-alias-status-success, var(--cds-global-color-green-700, #42810e));--border:var(--cds-alias-object-border-width-200, calc(2 / var(--cds-global-base, 20) * 1rem)) solid var(--background)}:host([_checked]) .input:after{transform:translate(calc(var(--cds-global-space-7,calc(16 / var(--cds-global-base,20) * 1rem)) - var(--cds-global-space-1,calc(1 / var(--cds-global-base,20) * 1rem))),0)}:host([_disabled]) .input{opacity:.6;cursor:not-allowed}[focusable]{width:var(--width);left:0}`;
+
+class r$2 extends c{constructor(){super(...arguments);this.cdsMotion="on";}async updated(t){super.updated(t),t.has("cdsMotion")&&"on"===this.cdsMotion&&(await this.updateComplete,this.cdsMotion="ready");}static get styles(){return [...super.styles,r$1]}}__decorate([m({type:String})],r$2.prototype,"cdsMotion",void 0);
+
+w("cds-toggle",r$2),w("cds-toggle-group",r);

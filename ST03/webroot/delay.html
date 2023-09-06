@@ -1,0 +1,146 @@
+<!--
+  ~ Copyright (C) 2022 Haller + Erne GmbH GmbH, Germany. All rights reserved.
+  
+  Idea/code adapted from Sergey Bunas 
+  Code from https://www.cssscript.com/circular-countdown-timer-javascript-css3/ is 
+  licensed under the MIT license as follows:   
+  
+	MIT License
+
+	Copyright (c) 2017 Sergey Bunas 
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+  
+  -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Loading...</title>
+  <base href="./">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <style>
+body {
+  background-color: white;
+}  
+.circle {
+  margin-left: 150px
+}  
+.controls {
+  position: absolute;
+  left: 385px;
+  top: 330px;
+  text-align: center;
+}
+.display-remain-time {
+  font-family: 'Roboto';
+  font-weight: bold;
+  font-size: 180px;
+  color: orange; /*#F7958E;*/
+}
+.minutes-set {
+  float: left;
+  margin-right: 28px;
+}
+.seconds-set { float: right; }
+.e-c-base {
+  fill: none;
+  stroke: #B6B6B6;
+  stroke-width: 25px
+}
+.e-c-progress {
+  fill: none;
+  stroke: orange; /*#F7958E;*/
+  stroke-width: 25px;
+  transition: stroke-dashoffset 0.7s;
+}
+.e-c-pointer {
+  fill: #FFF;
+  stroke: orange; /*#F7958E;*/
+  stroke-width: 2px;
+}
+#e-pointer { transition: transform 0.7s; }
+</style>  
+<!--<link rel="stylesheet" href="styles.db9156e55f8bfa109368.css"></head>-->
+<body>
+<div class="circle">
+  <svg width="900" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+     <g transform="translate(220,220)">
+        <circle r="200" class="e-c-base"/>
+        <g transform="rotate(-90)">
+           <circle r="200" class="e-c-progress"/>
+           <g id="e-pointer">
+              <circle cx="200" cy="0" r="15" class="e-c-pointer"/>
+           </g>
+        </g>
+     </g>
+  </svg>
+</div>
+<div class="controls">
+  <div class="display-remain-time">00:30</div>
+</div>
+<script>
+let timeLeft;
+let wholeTime = 0.0; // 0.5 * 60; // manage this to set the whole time 
+let isPaused = false;
+let isStarted = false;
+
+// OGS interface function, called by OGS
+function UpdateTimer(elapsed, total) {
+	console.log("Update!", elapsed, total);
+	wholeTime = total;
+	let val = Math.floor(total - elapsed)
+	displayTimeLeft(val);
+	//return "Hello World!";
+}
+
+//circle start
+let progressBar = document.querySelector('.e-c-progress');
+let indicator = document.getElementById('e-indicator');
+let pointer = document.getElementById('e-pointer');
+let length = Math.PI * 2 * 200;
+progressBar.style.strokeDasharray = length;
+function update(value, timePercent) {
+  var offset = - length - length * value / (timePercent);
+  progressBar.style.strokeDashoffset = offset; 
+  pointer.style.transform = `rotate(${360 * value / (timePercent)}deg)`; 
+};
+//circle ends
+const displayOutput = document.querySelector('.display-remain-time')
+const pauseBtn = document.getElementById('pause');
+const setterBtns = document.querySelectorAll('button[data-setter]');
+update(wholeTime,wholeTime); //refreshes progress bar
+displayTimeLeft(wholeTime);
+function changeWholeTime(seconds){
+  if ((wholeTime + seconds) > 0){
+    wholeTime += seconds;
+    update(wholeTime,wholeTime);
+  }
+}
+function displayTimeLeft (timeLeft){ //displays time on the input
+  let minutes = Math.floor(timeLeft / 60);
+  let seconds = timeLeft % 60;
+  let displayString = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  displayOutput.textContent = displayString;
+  update(timeLeft, wholeTime);
+}
+</script>
+</html>

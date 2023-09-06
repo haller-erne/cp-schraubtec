@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Clarity Core - Snowpack App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body cds-text="body" cds-layout="p:lg" cds-theme="dark">
+
+    <div class="demo-layout">
+      <header class="demo-header" cds-layout="p:md p@sm:lg">
+        <h1>Station settings</h1>
+      </header>
+
+      <div cds-layout="gap:md gap@md:xl p:lg p@sm:xl p-y@lg:xxl container:xl container:center">
+
+        <!-- radio and alarms -->
+        <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
+          <h2 cds-text="headline">Radio and Alarms</h2>
+          <!--<p cds-text="message">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+          </p>-->
+          <div cds-layout="grid gap:xs container:xl container:center">
+            <!-- row 1: 3-columns for state/on/off -->
+            <div cds-layout="col:4">
+              <div>State</div>
+              <cds-toggle>
+                <label>On/Off</label>
+                <input id="radio_state" type="checkbox" onclick='return false'/>
+              </cds-toggle>
+            </div>
+            <div cds-layout="col:4">
+              <div>Radio</div>
+              <cds-toggle>
+                <label>Mute local</label>
+                <input id="radio_mute_local" type="checkbox" />
+              </cds-toggle>
+              </br>
+              <cds-toggle>
+                <label>Mute global</label>
+                <input id="radio_mute_global" type="checkbox" />
+              </cds-toggle>
+            </div>
+            <div cds-layout="col:4">
+              <div>Alarms</div>
+              <cds-toggle>
+                <label>Mute local</label>
+                <input id="alarm_mute_local" type="checkbox" />
+              </cds-toggle>
+              </br>
+              <cds-toggle>
+                <label>Mute global</label>
+                <input id="alarm_mute_global" type="checkbox" />
+              </cds-toggle>
+              </br>
+            </div>
+            <!-- row 2: 2-columns, volume slider -->
+            <div cds-layout="col:4">
+                <label>Volume</label>
+              </cds-range>
+            </div>
+            <div cds-layout="col:8">
+              <cds-range style="width: 100%">
+                <input type="range" min="0" max="100" step="2" value="40" style="width: 90%"/>
+                <!--<cds-control-message>message text</cds-control-message>-->
+              </cds-range>
+            </div>
+            <!--<div cds-layout="col:6"><p>lorem ipsum asdlijasldkj asdlkj alskdj laskdj lkasjd </p></div>
+            <div cds-layout="col:6"><p>lorem ipsum asdlijasldkj asdlkj alskdj laskdj lkasjd </p></div>-->
+          </div>
+        </div>
+
+        <!-- Lighting -->
+        </br>
+        <cds-divider></cds-divider>
+        </br>
+        <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
+          <h2 cds-text="headline">Station lighting</h2>
+          <!--<p cds-text="message">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+          </p>-->
+          <div cds-layout="grid gap:xs container:xl container:center">
+            <!-- row 1: 3-columns for state/on/off -->
+            <div cds-layout="col:4">
+              <div>State</div>
+              <cds-toggle>
+                <label>On/Off</label>
+                <input id="lights_state" type="checkbox" onclick='return false'/>
+              </cds-toggle>
+            </div>
+            <div cds-layout="col:8">
+              <div>Lights</div>
+              <cds-toggle>
+                <label>Lighting local</label>
+                <input id="lights_local" type="checkbox" />
+              </cds-toggle>
+              </br>
+              <cds-toggle>
+                <label>Lighting global</label>
+                <input id="lights_global" type="checkbox" />
+              </cds-toggle>
+            </div>
+            <!-- more rows... -->
+          </div>
+        </div>
+
+        <!-- Fan -->
+        </br>
+        <cds-divider></cds-divider>
+        </br>
+        <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
+          <h2 cds-text="headline">Station Fan</h2>
+          <div cds-layout="grid gap:xs container:xl container:center">
+            <!-- row 1: 2-columns for state/speed -->
+            <div cds-layout="col:4">
+              <div>State</div>
+              <cds-toggle>
+                <label>On/Off</label>
+                <input id="fan_state" type="checkbox" onclick='return false'/>
+              </cds-toggle>
+            </div>
+            <div cds-layout="col:8">
+              <div>Speed</div>
+              <cds-range style="width: 100%">
+                <input id="fan_speed" type="range" min="0" max="3" step="1" value="0" style="width: 90%"/>
+                <!--<cds-control-message>message text</cds-control-message>-->
+              </cds-range>
+            </div>
+          </div>
+        </div>
+
+        </br>
+        <cds-divider></cds-divider>
+
+        <!-- AGV (admin only) -->
+        </br>
+        <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
+          <h2 cds-text="headline">AGV <cds-badge aria-label="notification 12" status="danger">admin</cds-badge>
+            </h2>
+          <div cds-layout="grid gap:xs container:xl container:center">
+            <!-- row 1: 2-columns for state/speed -->
+            <div cds-layout="col:3">
+              <div>Target station</div>
+              <cds-select control-width="stretch">
+                <select style="width: 100%">
+                  <option>St 1</option>
+                  <option>St 2</option>
+                  <option>St 3</option>
+                </select>
+              </cds-select>
+            </div>
+            <div cds-layout="col:1">
+            </div>
+            <div cds-layout="col:8">
+              </br>
+              <cds-button status="primary">Send to station</cds-button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <cds-alert-group status="danger" hidden>
+        <cds-alert closable>
+          General Kenobi. You are a bold one.
+        </cds-alert>
+      </cds-alert-group>
+
+    </div>
+    <script type="module" src="/_dist_/index.js"></script>
+  </body>
+</html>

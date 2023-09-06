@@ -1,0 +1,16 @@
+{
+  "imports": {
+    "@cds/city/css/bundles/default.min.css": "./@cds/city/css/bundles/default.min.css",
+    "@cds/core/alert/register.js": "./@cds/core/alert/register.js",
+    "@cds/core/badge/register.js": "./@cds/core/badge/register.js",
+    "@cds/core/button/register.js": "./@cds/core/button/register.js",
+    "@cds/core/divider/register.js": "./@cds/core/divider/register.js",
+    "@cds/core/forms/register.js": "./@cds/core/forms/register.js",
+    "@cds/core/global.min.css": "./@cds/core/global.min.css",
+    "@cds/core/icon/register.js": "./@cds/core/icon/register.js",
+    "@cds/core/styles/theme.dark.min.css": "./@cds/core/styles/theme.dark.min.css",
+    "@cds/core/tag/register.js": "./@cds/core/tag/register.js",
+    "@cds/core/toggle/register.js": "./@cds/core/toggle/register.js",
+    "normalize.css/normalize.css": "./normalize.css/normalize.css"
+  }
+}
