@@ -14,6 +14,7 @@ local M = {
 local initialized = nil
 
 local tools = require('positioning_tools')
+local json = require('cjson')
 
 local drivers = {
     ART = require('positioning_ART'),
@@ -360,6 +361,7 @@ local TaskState_old, TaskStep_old
 --
 function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, TaskState, TaskStep)
     M.curtask.PosCtrl = PosCtrl
+    M.curtask.Tool    = Tool
     local key = M.GetKey(JobName, BoltName)
     if TaskState_old ~= TaskState or TaskStep_old ~= TaskStep or M.key ~= key then
         XTRACE(16, string.format('PS_CheckToolPosition: Tool=%d, Job=%s, Task=%s, PosCtrl=%d, TaskState=%d, TaskStep=%d',
@@ -461,15 +463,19 @@ local function ShowSidePanel()
     Browser.Show('SidePanel', Positioning_SidePlanel_Url)
 end
 function Panel_OnToolButtonClicked(tool, toolType, WFState, WFLockReason)
-    -- TODO: check user level!
-    if M.curtask.PosCtrl and M.curtask.PosCtrl > 0 then
+    -- TODO: maybe only show the panel if paused?
+    local paused = (WFState == 1)
+    local isAdmin = (UserManager.user_level > 1)
+    if paused and isAdmin and M.curtask.PosCtrl and M.curtask.PosCtrl > 0 then
         ShowSidePanel()
     end
     return false            -- true would block OGS default click handling
 end
 function Panel_OnSTKNButtonClicked(tool, toolType, WFState, WFLockReason)
-    -- TODO: check user level!
-    if M.curtask.PosCtrl and M.curtask.PosCtrl > 0 then
+    -- TODO: maybe only show the panel if paused?
+    local paused = (WFState == 1)
+    local isAdmin = (UserManager.user_level > 1)
+    if paused and isAdmin and M.curtask.PosCtrl and M.curtask.PosCtrl > 0 then
         ShowSidePanel()
     end
     return false            -- true would block OGS default click handling
@@ -478,6 +484,10 @@ end
 -- !!!!!!!!!!!!!! WARNING: handler is single instance and might break other handlers !!!!!!!!!!!!
 local function OnSidePanelMsg(name, cmd)
 --    XTRACE(16, string.format("name=%s, cmd=%s", tostring(name), tostring(cmd)))
+    local chn = nil
+    if M.curtask.Tool then
+        chn = M.channels[M.curtask.Tool]
+    end
     local o = json.decode(cmd)
     if o and o.cmd then
         if o.cmd == 'get-position' then
@@ -488,12 +498,12 @@ local function OnSidePanelMsg(name, cmd)
                 user_level = UserManager.user_level,
                 admin_level = UserManager.admin_level,
             }
-            if type(M.pos_cur) == 'table' then
-                p.Pos = M.pos_cur
+            if type(chn.pos) == 'table' then
+                p.Pos = chn.pos
                 p.Error = nil
             else
                 p.State = -1                    -- Positioning not running
-                p.Error = M.pos_cur             -- Positioning error message
+                p.Error = 'no data'             -- Positioning error message
             end
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdatePosition('"..par.."');")
