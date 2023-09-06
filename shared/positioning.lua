@@ -210,8 +210,11 @@ function M.GetCurrentToolPos(tool)
         if pos ~= nil then
             -- valid position, update our channel data
             chn.pos = pos
+            chn.err = nil
         else
             XTRACE(1, 'Positioning: error returned from GetCurrentToolPosition!')
+            chn.pos = nil
+            chn.err = inpos
             return nil, inpos
         end
         return chn.pos, inpos
@@ -429,6 +432,8 @@ function PS_TeachToolPosition(State, Tool, JobName, BoltName, PosCtrl, ToolPosDe
         XTRACE(16, 'Positioning: start tracking: ' .. JobName .. ':' .. BoltName);
         M.StartTasks(JobName)
     end
+    M.curtask.PosCtrl = PosCtrl
+    M.curtask.Tool    = Tool
 
     M.SelectPos(Tool, JobName, BoltName, PosCtrl, ToolPosDef)
     local pos, err = M.GetCurrentToolPos(Tool)
@@ -503,7 +508,7 @@ local function OnSidePanelMsg(name, cmd)
                 p.Error = nil
             else
                 p.State = -1                    -- Positioning not running
-                p.Error = 'no data'             -- Positioning error message
+                p.Error = chn.err or 'no data'  -- Positioning error message
             end
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdatePosition('"..par.."');")
@@ -513,7 +518,7 @@ local function OnSidePanelMsg(name, cmd)
                 Job = M.curtask.job,
                 Task = M.curtask.task,
                 Tool = 1,                       -- TODO
-                Pos = M.pos_cfg
+                Pos = M.curtask.pos
             }
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdateParams('"..par.."');")

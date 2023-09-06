@@ -104,6 +104,10 @@ M.GetCurrentToolPos = function(chn, expectedpos)
 			    end
             end
 		end
+        return pos, inpos
+    else
+        -- some error
+        return nil, pos -- pos is now an error string!
     end
 --[[
     local connected = M.IsConnected() and inpos ~= nil
@@ -119,7 +123,6 @@ M.GetCurrentToolPos = function(chn, expectedpos)
         return nil, "not connected"
     end
 ]]--
-    return pos, inpos
 end
 
 return M
