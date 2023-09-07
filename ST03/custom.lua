@@ -7,7 +7,7 @@ end
 
 ---------------------------------------------------------------------------------------
 -- webbrowser stuff
-function OnSidePanelMsg(name, cmd)
+local function OnSidePanelMsg(name, cmd)
     XTRACE(16, string.format("name=%s, cmd=%s", tostring(name), tostring(cmd)))
     local v = OGS.Version
     Browser.ExecJS_nonblocking(name, "setVersion('"..v.s:sub(1,8).."');")

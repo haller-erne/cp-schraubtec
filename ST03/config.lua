@@ -11,7 +11,10 @@ requires = {
 	--"custom",
 	--"resultdata",
 	"custom_nok_handling",
+	"lua_tool_delay",
+	"lua_tool_tass",
 	"station_io",
+	-- "lua_tool_mqtt",
 	"sim",
 }
 current_project.logo_file = 'rexroth.png'

@@ -83,7 +83,10 @@ function GetNokBehaviour(Tool, State, JobName, TaskName,  RundownName, rework)
     if M.channels[Tool] ~= nil then
         local chn = M.channels[Tool]
         if chn.nok_loosen > 0 then
-            return process_nok_repeat
+            if rework > 0 then
+                -- always allow CCW loosen after Nok (even for operator access level)
+                return process_nok_repeat + process_nok_dont_check_rights
+            end
         end
     end
     return -1       -- use behaviour from station.ini
