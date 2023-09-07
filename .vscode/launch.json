@@ -9,18 +9,18 @@
             "type": "lua-local",
             "request": "launch",
             "program": {
-              "command": "D:/sandboxes/ogs/ogs-trunk/bin/debug/monitor.exe",
+              "command": "c:/program files (x86)/bosch rexroth ag/OGS 3.0/monitor.exe",
               "communication": "stdio"
             },
             "args": [
             ],
             "scriptRoots": [
                 //"D:/Entwicklung/sw/heOGS/config/projects/Bosch Horb/Montage/ST130",
-                "D:/sandboxes/ogs/ogs-trunk/bin/debug",
-                "D:/sandboxes/ogs/ogs-trunk/bin/debug/lualibs",
+                "c:/program files (x86)/bosch rexroth ag/OGS 3.0",
+                "c:/program files (x86)/bosch rexroth ag/OGS 3.0/lualibs",
             ],
             "stopOnEntry": true,
-            "cwd": "D:/sandboxes/ogs/ogs-trunk/bin/debug/",
+            "cwd": "c:/program files (x86)/bosch rexroth ag/OGS 3.0/",
             //"verbose": true
         }
     ]
