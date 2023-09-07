@@ -3,7 +3,7 @@ local json = require('cjson')
 
 local M =
 {
-
+    tracking = nil
 }
 
 
@@ -58,33 +58,40 @@ function M.StartTask(chn, JobName)
     -- start the positioning system
     -- select the workspace
     XTRACE(2, "START TASK")
-    M.dev:set_workspace(JobName)
+    if not M.tracking then
+        M.dev:set_workspace(JobName)
 
-    --   	-- check the bolts and possibly update them
-    --   	local art_poslist, err = M.dev:get_position_list()
+        --   	-- check the bolts and possibly update them
+        --   	local art_poslist, err = M.dev:get_position_list()
 
-    -- NOTE: as we don't have the list of positions for the job, simply 
-    --       delete all positions from the ART interface and add them 
-    --       later step by step...
-    M.dev:del_position_list()
+        -- NOTE: as we don't have the list of positions for the job, simply 
+        --       delete all positions from the ART interface and add them 
+        --       later step by step...
+        M.dev:del_position_list()
 
-    -- finally, start tracking
-    local ok, err = M.dev:start()
-    if ok ~= true then
-        SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to start tracking, err: %s!', tostring(err)))
-    else
-        ResetLuaAlarm('ART')
+        -- finally, start tracking
+        local ok, err = M.dev:start()
+        if ok ~= true then
+            SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to start tracking, err: %s!', tostring(err)))
+        else
+            M.tracking = true
+            ResetLuaAlarm('ART')
+        end
+        return ok
     end
-    return ok
+    return true
 end
 
 function M.StopTask(chn, JobName)
     -- stop tracking
     XTRACE(2, "STOP TASK")
-    local ret = M.dev:stop()
-    if (ret == 0) then
-        ResetLuaAlarm('ART')
+    if M.tracking then
+        local ret = M.dev:stop()
+        if (ret == 0) then
+            ResetLuaAlarm('ART')
+        end
     end
+    M.tracking = nil
     return 0                -- ok
 end
 

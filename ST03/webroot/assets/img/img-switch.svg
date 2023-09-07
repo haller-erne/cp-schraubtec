@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2020 Robert Bosch GmbH Copyright (C) 2020 Robert Bosch Manufacturing Solutions GmbH, Germany. All rights reserved.
+  -->
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 224 64" style="enable-background:new 0 0 224 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#BFE3F3;fill-opacity:0;}
+	.st1{fill:#005691;}
+	.st2{fill:#FFFFFF;}
+	.st3{fill:#DFDFE0;}
+</style>
+<title>img-switch</title>
+<rect x="112.1" class="st0" width="96" height="64"/>
+<path class="st1" d="M148.1,20h24c6.6,0,12,5.4,12,12l0,0c0,6.6-5.4,12-12,12h-24c-6.6,0-12-5.4-12-12l0,0
+	C136.1,25.4,141.5,20,148.1,20z"/>
+<circle class="st2" cx="172.1" cy="32" r="10"/>
+<rect x="15.9" class="st0" width="96" height="64"/>
+<path class="st3" d="M51.9,20h24c6.6,0,12,5.4,12,12l0,0c0,6.6-5.4,12-12,12h-24c-6.6,0-12-5.4-12-12l0,0C39.9,25.4,45.3,20,51.9,20
+	z"/>
+<circle class="st2" cx="51.9" cy="32" r="10"/>
+</svg>

@@ -1,0 +1,19 @@
+[
+  {
+    "title_i18n_key": "Navigation.Commissioning",
+    "title": "Commissioning",
+    "url": "/",
+    "position": 0,
+    "icon": "bosch-ic-wrench-calibrate",
+    "routerLinkActiveOptions": {
+        "exact": true
+      }
+  },
+  {
+    "title_i18n_key": "Navigation.Analysis",
+    "title": "Analysis",
+    "url": "analyse",
+    "position": 1,
+    "icon": "bosch-ic-analysis"
+  }
+]

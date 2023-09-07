@@ -1,0 +1,233 @@
+{
+    " curves)": " curves)",
+    ":": ":",
+    "(calculating)": "(calculating)",
+    "(no curves checked)": "(no curves checked)",
+    "Abort": "Abort",
+    "Alert": {
+        "Close": {
+            "description": "Do your really want to close this dialog?",
+            "title": "Really close?"
+        },
+        "ConnectError": {
+            "description": "Cannot connect to the tightening system, please retry.",
+            "title": "Connect error!"
+        },
+        "Disconnect": {
+            "description": "Do you really want to disconnect from the station?",
+            "title": "Disconnect?"
+        },
+        "DownloadFileError": {
+            "description": "Some error occurred while downloading the parameter files, please retry.",
+            "title": "Error downloading parameter file!"
+        },
+        "DownloadFileInvalid": {
+            "description": "The downloaded data file is not a valid TASS parameter file, please select another file and retry.",
+            "title": "Downloaded parameter file invalid!"
+        }
+    },
+    "Angle [°]": "Angle [°]",
+    "Automatically calculate M1/M2 limits based on a percentage of the M1/M2 calibration value": "Automatically calculate M1/M2 limits based on a percentage of the M1/M2 calibration value.",
+    "Autoscroll": "Autoscroll",
+    "Cancel": "Cancel",
+    "Channel": "Channel",
+    "Close": "Close",
+    "Connect": "Connect",
+    "Connect to tightening system": "Connect to tightening system",
+    "Connecting dot dot dot": "Connecting...",
+    "Connection": {
+        "conn": "Connected to:\nIP: {{host}}\nChn: {{rack}}.{{slot}}",
+        "noconn": "Not connected.",
+        "reconnect": "Lost connection, trying to reconnect..."
+    },
+    "ConnectModal": {
+        "Errors": {
+            "Hostname": {
+                "required": "IP address or hostname of controller is required!"
+            },
+            "Rack": {
+                "range": "Rack must be in the range of 0...15!"
+            },
+            "Slot": {
+                "range": "Slot must be in the range of 1...6!"
+            },
+            "Username": {
+                "required": "Username is required!"
+            }
+        },
+        "Hostname": {
+            "placeholder": "IP address or hostname of controller"
+        }
+    },
+    "Continue": "Continue",
+    "CSV export:": "CSV export:",
+    "Decimal seperator": "Decimal separator:",
+    "Decimal separator": "Decimal separator:",
+    "Delete": "Delete",
+    "Disconnect": "Disconnect",
+    "Do you really want to upload the parameters file (possibly overwriting parameters on the controller)?": "Do you really want to upload the parameters file (possibly overwriting parameters on the controller)?",
+    "Export": "Export",
+    "CSV Export": "CSV Export",
+    "File": "File",
+    "Imprint": {
+        "board": "Board of management",
+        "contact": "Contact",
+        "name": "Name",
+        "nameAndAddress": "Name and address",
+        "title": "Imprint",
+        "version": "Version"
+    },
+    "IP-Address": "IP-Address",
+    "Kali": "Cali",
+    "LA [%]": "LA [%]",
+    "LA Linearity": "LA Linearity",
+    "Language:": "Language:",
+    "License(s)": "License(s)",
+    "List seperator:": "Field separator:",
+    "List separator:": "Field separator:",
+    "M1 Calibration": "M1 Calibration",
+    "M1/M2 limits": "M1/M2 limits",
+    "M2 Calibration": "M2 Calibration",
+    "ME:": "ME:",
+    "Messages": {
+        "date": "Date",
+        "delete": "Delete",
+        "deleteAll": "Delete all messages",
+        "deleteSelected": "Delete selected messages",
+        "error": "Error",
+        "goTo": "Go to",
+        "information": "Information",
+        "message": "Message",
+        "noData": "No data available.",
+        "success": "Success",
+        "title": "Messages",
+        "type": "Type",
+        "typeFilter": "Filter Type",
+        "warning": "Warning"
+    },
+    "MS:": "MS:",
+    "Name": "Name",
+    "Navigation": {
+        "Analysis": "Analysis",
+        "Calibration": "Calibration",
+        "Commissioning": "Commissioning",
+        "GettingStarted": "Getting Started",
+        "OSSInfo": "Open Source Info",
+        "Settings": "Settings",
+        "Summary": "Summary"
+    },
+    "New TASS parameter set": "New TASS parameter set",
+    "No": "No",
+    "no data available": "no data available",
+    "No files found on controller Please create a new parameter file and upload it later": "No files found on controller. Please create a new parameter file and upload it later",
+    "Notification": {
+        "Error": {
+            "Can't_open_two_files_with_the_same_name": "Error: Can't open two files with the same name.",
+            "Only_csv_Files_allowed": "Error: Only .csv/.tra/.crv files allowed.",
+            "Only_txt_files_allowed": "Error: Only .txt Files allowed.",
+            "InvalidCurveFormat": "Error: Failed to decode curve file!"
+      }
+    },
+    "OG": "UL",
+    "Ok": "Ok",
+    "Parameter": "Parameter",
+    "Password": "Password",
+    "Prg": "Prg",
+    "Project": "Project",
+    "SB": "SB",
+    "Search": "Search",
+    "Select a parameter file:": "Select a parameter file:",
+    "Select download file type": "Select download file type",
+    "Serial number": "Serial number",
+    "Settings": "Settings",
+    "SN": "SN",
+    "StartMenu": {
+        "Create new TASS parameter set": "Create new TASS parameter set",
+        "Download parameters from controller": "Download parameters from controller",
+        "Getting started": "Getting started"
+    },
+    "State:": "State:",
+    "State/T1": "State/T1",
+    "successfully loaded from controller": "successfully loaded from controller.",
+    "T": "T",
+    "T1 updated": "T1 updated",
+    "T1 updated (": "T1 updated (",
+    "TassErrCode": {
+        "NODATA": "(no result data available)",
+        "OK": "Analysed ok.",
+        "TASS_E_AL_NEPT": "not enough points in AL range (less than params.AL_Min)",
+        "TASS_E_AL_R_TOO_HIGH": "AL regression uncertain (correlation too low)",
+        "TASS_E_AM_R_TOO_HIGH": "AM regression uncertain (correlation too low)",
+        "TASS_E_AR_NEPT": "not enough points in AR range (less than params.AR_Min)",
+        "TASS_E_AR_R_TOO_HIGH": "AR regression uncertain (correlation too low)",
+        "TASS_E_BUFTOOSMALL": "Buffer too small",
+        "TASS_E_CRCERROR": "CRC wrong",
+        "TASS_E_FILEREAD": "read file error",
+        "TASS_E_IDNOTUNIQUE": "Given ID is not unique",
+        "TASS_E_INVALIDADR": "invalid address",
+        "TASS_E_INVALIDARG": "invalid argument passed to function",
+        "TASS_E_INVALIDHDR": "invalid header/structure",
+        "TASS_E_INVALIDOBJ": "invalid object",
+        "TASS_E_INVALIDPRG": "invalid program number",
+        "TASS_E_INVALIDVER": "invalid version",
+        "TASS_E_JOBNOTRDY": "Job is not in correct state: job not ready",
+        "TASS_E_LA_TOO_HIGH": "LA outside limits (too high)",
+        "TASS_E_M1_TOO_HIGH": "M1 outside limits (too high)",
+        "TASS_E_M1_TOO_LOW": "M1 outside limits (too low)",
+        "TASS_E_M2_TOO_HIGH": "M2 outside limits (too high)",
+        "TASS_E_M2_TOO_LOW": "M2 outside limits (too low)",
+        "TASS_E_NO_LEFT": "no points found in the left area",
+        "TASS_E_NO_POINTS": "no points given/found",
+        "TASS_E_NO_RIGHT": "no points found in the right area",
+        "TASS_E_NO_THRESHOLD": "no points above threshold found",
+        "TASS_E_NOTFOUNDID": "Given ID not found (KE/SE)",
+        "TASS_E_NOTFOUNDKE": "KE not found in internal list",
+        "TASS_E_NOTIMPL": "not implemented",
+        "TASS_E_REG_LEFT": "error calculating the regressing for the left area",
+        "TASS_E_REG_LIM_AL": "AL range regression line is uncertain (dR below params.AL_AR_MinR)",
+        "TASS_E_REG_LIM_AM": "AM range regression line is uncertain (dR below params.AM_MinR)",
+        "TASS_E_REG_LIM_AR": "AR range regression line is uncertain (dR below params.AL_AR_MinR)",
+        "TASS_E_REG_MIDDLE": "error calculating the regressing for the middle area",
+        "TASS_E_REG_RIGHT": "error calculating the regressing for the right area",
+        "TASS_E_REGRESSION": "error calculating regression",
+        "TASS_E_SBT_ABOVE": "point outside (above) SB_T hull found",
+        "TASS_E_SBT_BELOW": "point outside (below) SB_T hull found",
+        "TASS_E_SIZEMISMATCH": "size mismatch",
+        "TASS_E_TOOMANY_POINTS": "too many points given",
+        "TASS_E_UNCOMPRESS": "uncompress error",
+        "TASS_E_W3_TOO_HIGH": "W3 outside limits (too high)",
+        "TASS_E_W3_TOO_LOW": "W3 outside limits (too low)",
+        "TASS_E_WIN32ERROR": "Win32 error occured. Use GetLastError()",
+        "UNKNOWN": "Unknown error: {{code}}"
+    },
+    "Time": "Time",
+    "Tooltip": {
+        "DeleteChecked": "Delete checked items",
+        "Edit": {
+            "Enable": "Enable/disable edits",
+            "Revert": "Revert changes",
+            "Save": "Save parameters",
+            "SetLimits": "Set M1/M2 limits"
+        },
+        "ExportChecked": "Export checked items",
+        "Fullscreen": "Show large view",
+        "NewFile": "Create new TASS parameter set.",
+        "OpenFile": "Open project file or TASS parameter file",
+        "ResetZoom": "Reset zoom",
+        "SaveFile": "Save parameters or project as file.",
+        "ShowNorm": "Switch view mode.",
+        "T1Copy": "Copy T1 value",
+        "T1Recalc": "Recalculate T1",
+        "ToggleAutoscroll": "Toggle auto-update",
+        "UploadFile": "Upload current parameters to device.",
+        "ZoomNormalized": "Zoom to normalized range"
+    },
+    "Torque [Nm]": "Torque [Nm]",
+    "UG": "LL",
+    "Upload parameter file?": "Upload parameter file?",
+    "Use File": "Use File",
+    "User": "User",
+    "Version": "Version",
+    "W3 Calibration": "W3 Calibration",
+    "Yes": "Yes"
+}

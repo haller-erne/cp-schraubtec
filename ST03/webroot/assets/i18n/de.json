@@ -1,0 +1,237 @@
+{
+    " curves)": " Kurven)",
+    ":": ":",
+    "(calculating)": "(berechnet)",
+    "(no curves checked)": "(keine Kurven ausgewählt)",
+    "Abort": "Abbrechen",
+    "Alert": {
+        "Close": {
+            "description": "Soll dieser Dialog wirklich abgeborochen werden?",
+            "title": "Wirklich abbrechen?"
+        },
+        "ConnectError": {
+            "description": "Es kann keine Verbindung zum Schraubsystem hergestellt werden, bitte Parameter prüfen und wiederholen.",
+            "title": "Kommunikationsfehler!"
+        },
+        "Disconnect": {
+            "description": "Soll die Verbindung mit dem Schraubsystem getrennt werden?",
+            "title": "Verbindung trennen?"
+        },
+        "DownloadFileError": {
+            "description": "Beim Download der Parameterdatei ist ein Fehler aufgetreten, bitte wiederholen.",
+            "title": "Fehler beim Download der Parameterdatei!"
+        },
+        "DownloadFileInvalid": {
+            "description": "Die heruntergeladene Parameterdatei ist keine gültige TASS-Parameterdatei. Bitte eine andere Datei wählen.",
+            "title": "Ungültige Parameterdatei!"
+        }
+    },
+    "Angle [°]": "Winkel [°]",
+    "Automatically calculate M1/M2 limits based on a percentage of the M1/M2 calibration value": "Automatische Berechnung von M1/M2 Grenzen basierend auf Prozentsatz des M1/M2 Kalibrierungswert.",
+    "Autoscroll": "Autoscroll",
+    "Cancel": "Abbrechen",
+    "Channel": "Kanal",
+    "Close": "Schließen",
+    "Connect": "Verbinden",
+    "Connect to tightening system": "Verbindung mit Schraubsystem",
+    "Connecting dot dot dot": "Verbindung wird hergestellt...",
+    "Connection": {
+        "conn": "Verbunden mit:\nIP: {{host}}\nChn: {{rack}}.{{slot}}",
+        "noconn": "Keine Verbindung aktiv.",
+        "reconnect": "Verbindung verloren, wird wiederhergestellt..."
+    },
+    "ConnectModal": {
+        "Errors": {
+            "Hostname": {
+                "required": "IP-Adresse oder Hostname muss eingetragen werden!"
+            },
+            "Rack": {
+                "range": "Rack muss im Bereich 0-15 sein!"
+            },
+            "Slot": {
+                "range": "Slot muss im Bereich 1-6 sein!"
+            },
+            "Username": {
+                "required": "Benutzername muss eingegeben werden!"
+            }
+        },
+        "Hostname": {
+            "placeholder": "IP-Adresse oder Hostname der Steuerung"
+        }
+    },
+    "Continue": "Weiter",
+    "CSV export:": "CSV-Export:",
+    "Decimal seperator:": "Dezimalzeichen:",
+    "Decimal separator:": "Dezimalzeichen:",
+    "Delete": "Löschen",
+    "Disconnect": "Verbindung trennen",
+    "Do you really want to upload the parameters file (possibly overwriting parameters on the controller)?": "Wollen Sie wirklicht die Parameterdatei hochladen (dabei könnten Parameter auf der Steuerung überschrieben werden)?",
+    "Export": "Exportieren",
+    "CSV Export": "CSV Export",
+    "File": "Datei ",
+    "IP-Address": "IP-Adresse",
+    "Imprint": {
+        "board": "Geschäftsführung",
+        "contact": "Kontakt",
+        "name": "Name",
+        "nameAndAddress": "Name und Adresse",
+        "title": "Impressum",
+        "version": "Version"
+    },
+    "Kali": "Kali",
+    "LA [%]": "LA [%]",
+    "LA Linearity": "LA Linearität",
+    "Language:": "Sprache:",
+    "License(s)": "Lizenz(en)",
+    "List seperator:": "Feldtrenner:",
+    "List separator:": "Feldtrenner:",
+    "M1 Calibration": "M1 Kalibrierung",
+    "M1/M2 limits": "M1/M2 Grenzen",
+    "M2 Calibration": "M2 Kalibrierung",
+    "ME:": "ME",
+    "Messages": {
+        "date": "Datum",
+        "delete": "Löschen",
+        "deleteAll": "Alle Ereignisse löschen",
+        "deleteSelected": "Ausgewählte Ereignisse löschen",
+        "error": "Fehler",
+        "goTo": "Gehe zu",
+        "information": "Information",
+        "message": "Ereignis",
+        "noData": "Keine Daten vorhanden.",
+        "success": "Erfolg",
+        "title": "Ereignisse",
+        "type": "Typ",
+        "typeFilter": "Filter",
+        "warning": "Warnung"
+    },
+    "MS:": "MS",
+    "Name": "Name",
+    "Navigation": {
+        "Analysis": "Analyse",
+        "Calibration": "Kalibrierung",
+        "Commissioning": "Inbetriebnahme",
+        "GettingStarted": "Getting Started",
+        "OSSInfo": "Open Source Info",
+        "Settings": "Einstellungen",
+        "Summary": "Summary"
+    },
+    "New TASS parameter set": "Neue TASS Parameter",
+    "No": "Nein",
+    "no data available": "keine Daten verfügbar",
+    "No files found on controller Please create a new parameter file and upload it later": "Keine Datein auf der Steuerung gefunden. Bitte neue Parameterdatei erstellen und danach hochladen.",
+    "Notification": {
+        "Error": {
+            "Can't_open_two_files_with_the_same_name": "Fehler: Dateien mit gleichem Namen können nicht geöffnet werden ",
+            "Only_csv_Files_allowed": "Fehler: Nur .csv/.tra/.crv Dateien erlaubt",
+            "Only_txt_files_allowed": "Fehler: Nur .txt Dateien erlaubt",
+            "InvalidCurveFormat": "Fehler: Dekodieren der Kurvendatei fehlgeschlagen!"
+        }
+    },
+    "OG": "OG",
+    "Ok": "Ok",
+    "Parameter": "Parameter",
+    "Password": "Passwort",
+    "Prg": "Prg",
+    "Project": "Projekt",
+    "SB": "SB",
+    "Search": "Suchen",
+    "Select a parameter file:": "Parameter Datei auswählen",
+    "Select download file type": "Dateityp zum herunterladen auswählen",
+    "Serial number": "Seriennummer",
+    "Settings": "Einstellungen",
+    "SN": "SN",
+    "StartMenu": {
+        "Create new TASS parameter set": "Neues TASS Parameter Set erstellen",
+        "Download parameters from controller": "Parameter von Steuerung herunterladen",
+        "Getting started": "Einstieg"
+    },
+    "State:": "Status:",
+    "State/T1": "Status/T1",
+    "successfully loaded from controller": "erfolgreich von der Steuerung geladen.",
+    "T": "T",
+    "T1 updated": "T1 aktualisiert",
+    "T1 updated (": "T1 aktualisiert (",
+    "TassErrCode": {
+        "NODATA": "(Keine Analyseergebnisse vorhganden)",
+        "OK": "Analyse ok.",
+        "TASS_E_AL_NEPT": "Zu wenige Punkte im linken Bereich",
+        "TASS_E_AL_R_TOO_HIGH": "Zu große Abweichung Regressionsgerade links (Korrelation zu klein)",
+        "TASS_E_AM_R_TOO_HIGH": "Zu große Abweichung Regressionsgerade mitte (Korrelation zu klein)",
+        "TASS_E_AR_NEPT": "Zu wenige Punkte im rechten Bereich",
+        "TASS_E_AR_R_TOO_HIGH": "Zu große Abweichung Regressionsgerade rechts (Korrelation zu klein)",
+        "TASS_E_BUFTOOSMALL": "Datenpuffer zu klein",
+        "TASS_E_CRCERROR": "CRC-Fehler",
+        "TASS_E_FILEREAD": "Fehler beim Lesen der Datei",
+        "TASS_E_IDNOTUNIQUE": "ID ist nicht eindeutig",
+        "TASS_E_INVALIDADR": "Ungültige Adresse",
+        "TASS_E_INVALIDARG": "Ungültiges Funktionsargument",
+        "TASS_E_INVALIDHDR": "Ungültiger Header/Struktur",
+        "TASS_E_INVALIDOBJ": "Ungültiges Objekt",
+        "TASS_E_INVALIDPRG": "Ungültige Programmnummer",
+        "TASS_E_INVALIDVER": "Falsche Version",
+        "TASS_E_JOBNOTRDY": "Job ist nicht im korrekten Zustand: Job nicht bereit",
+        "TASS_E_LA_TOO_HIGH": "LA außerhalb Grenzen (zu hoch)",
+        "TASS_E_M1_TOO_HIGH": "M1 außerhalb Grenzen (zu hoch)",
+        "TASS_E_M1_TOO_LOW": "M1 außerhalb Grenzen (zu niedrig)",
+        "TASS_E_M2_TOO_HIGH": "M2 außerhalb Grenzen (zu hoch)",
+        "TASS_E_M2_TOO_LOW": "M2 außerhalb Grenzen (zu niedrig)",
+        "TASS_E_NO_LEFT": "Keine Punkte im Bereich Links",
+        "TASS_E_NO_POINTS": "Keine Punkte vorhanden/gefunden",
+        "TASS_E_NO_RIGHT": "Keine Punkte im Bereich Rechts",
+        "TASS_E_NO_THRESHOLD": "Keine Messwerte über Startmoment (MS) vorhanden",
+        "TASS_E_NOTFOUNDID": "ID nicht gefunden (KE/SE)",
+        "TASS_E_NOTFOUNDKE": "KE konnte in interner Liste nicht gefunden werden",
+        "TASS_E_NOTIMPL": "Nicht implementiert",
+        "TASS_E_REG_LEFT": "Keine Aproximation für linke Gerade möglich",
+        "TASS_E_REG_LIM_AL": "Zu große Abweichung Regressionsgerade links (dR < AL_AR_MinR)",
+        "TASS_E_REG_LIM_AM": "Zu große Abweichung Regressionsgerade mitte (dR < AM_MinR)",
+        "TASS_E_REG_LIM_AR": "Zu große Abweichung Regressionsgerade rechts (dR < AL_AR_MinR)",
+        "TASS_E_REG_MIDDLE": "Keine Punkte im Bereich Mitte",
+        "TASS_E_REG_RIGHT": "Keine Aproximation für rechte Gerade möglich",
+        "TASS_E_REGRESSION": "Keine Aproximation für Gerade möglich",
+        "TASS_E_SBT_ABOVE": "Punkte oberhalb der Hülle gefunden",
+        "TASS_E_SBT_BELOW": "Punkte unterhalb der Hülle gefunden",
+        "TASS_E_SIZEMISMATCH": "Widersprüchliche Größe",
+        "TASS_E_TOOMANY_POINTS": "Zu viele Punkte vorhanden",
+        "TASS_E_UNCOMPRESS": "Fehler beim entpacken",
+        "TASS_E_W3_TOO_HIGH": "W3 außerhalb Grenzen (zu hoch)",
+        "TASS_E_W3_TOO_LOW": "W3 außerhalb Grenzen (zu niedrig)",
+        "TASS_E_WIN32ERROR": "Win32 Fehler",
+        "UNKNOWN": "Unbekannter Fehler: {{code}}",
+        "TASS_E_M1_TOO_HIGH \t": "",
+        "TASS_E_M1_TOO_LOW\t\t": "",
+        "TASS_E_NOTIMPL \t": "",
+        "TASS_E_W3_TOO_HIGH\t": ""
+    },
+    "Time": "Zeit",
+    "Tooltip": {
+        "DeleteChecked": "Markierte Elemente löschen",
+        "Edit": {
+            "Enable": "Eingabe aktivieren/deaktivieren",
+            "Revert": "Parameter rücksetzen",
+            "Save": "Parameter übernehmen",
+            "SetLimits": "M1/M2 Grenzen setzen"
+        },
+        "ExportChecked": "Markierte Elemente exportieren",
+        "Fullscreen": "Maximiert anzeigen",
+        "NewFile": "Neuen TASS-Parametersatz erstellen.",
+        "OpenFile": "Projekt- oder TASS-Parameterdatei öffnen",
+        "ResetZoom": "Zoom alles",
+        "SaveFile": "Projekt- oder TASS-Parameterdatei speichern.",
+        "ShowNorm": "Anzeigemodus umschalten",
+        "T1Copy": "T1 übernehmen",
+        "T1Recalc": "T1 neu berechnen",
+        "ToggleAutoscroll": "Automatische Aktualisieren",
+        "UploadFile": "Aktuelle Parameter auf Schraubsystem hochladen.",
+        "ZoomNormalized": "Zoom auf normierten Bereich"
+    },
+    "Torque [Nm]": "Drehmoment [Nm]",
+    "UG": "UG",
+    "Upload parameter file?": "Parameterdatei hochladen?",
+    "Use File": "Datei benutzen",
+    "User": "Benutzer",
+    "Version": "Version",
+    "W3 Calibration": "W3 Kalibrierung",
+    "Yes": "Ja"
+}

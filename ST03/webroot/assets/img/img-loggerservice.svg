@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2020 Robert Bosch GmbH Copyright (C) 2020 Robert Bosch Manufacturing Solutions GmbH, Germany. All rights reserved.
+  -->
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 224 64" style="enable-background:new 0 0 224 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#EFEFF0;stroke-miterlimit:10;}
+	.st1{fill:#EFEFF0;}
+	.st2{fill:none;}
+	.st3{fill:#F17F8B;}
+</style>
+<title>img-productinfo</title>
+<line class="st0" x1="0.1" y1="21.2" x2="223.9" y2="21.2"/>
+<line class="st0" x1="0.1" y1="42.7" x2="224" y2="42.7"/>
+<g>
+	<rect x="24.2" y="7" class="st1" width="12.3" height="6.9"/>
+	<rect x="55.5" y="7" class="st1" width="82.8" height="6.9"/>
+	<rect x="163.5" y="7" class="st1" width="50.6" height="6.9"/>
+	<g>
+		<path class="st1" d="M14.3,6.5c-2.2,0-4,1.8-4,4s1.8,4,4,4s4-1.8,4-4S16.5,6.5,14.3,6.5z M14.6,12.4H14V9.7h0.5L14.6,12.4
+			L14.6,12.4z M14.3,9.2c-0.2,0-0.4-0.2-0.4-0.4s0.2-0.4,0.4-0.4c0.2,0,0.4,0.2,0.4,0.4C14.7,9,14.5,9.2,14.3,9.2z"/>
+		<rect x="9.5" y="5.7" class="st2" width="9.6" height="9.6"/>
+	</g>
+</g>
+<g>
+	<rect x="24.2" y="28.5" class="st1" width="20.3" height="6.9"/>
+	<rect x="55.5" y="28.5" class="st1" width="68.9" height="6.9"/>
+	<rect x="180.4" y="28.5" class="st1" width="33.7" height="6.9"/>
+	<g>
+		<path class="st1" d="M14.3,28c-2.2,0-4,1.8-4,4s1.8,4,4,4s4-1.8,4-4S16.5,28,14.3,28z M14.6,34H14v-2.8h0.5L14.6,34L14.6,34z
+			 M14.3,30.7c-0.2,0-0.4-0.2-0.4-0.4c0-0.2,0.2-0.4,0.4-0.4c0.2,0,0.4,0.2,0.4,0.4C14.7,30.5,14.5,30.7,14.3,30.7z"/>
+		<rect x="9.5" y="27.2" class="st2" width="9.6" height="9.6"/>
+	</g>
+</g>
+<g>
+	<rect x="55.5" y="50" class="st1" width="86.6" height="6.9"/>
+	<rect x="24.2" y="50" class="st3" width="17" height="6.9"/>
+	<rect x="155.8" y="50" class="st1" width="58.3" height="6.9"/>
+	<g>
+		<path class="st3" d="M15.9,49.6h-3.3l-2.3,2.3v3.3l2.3,2.3h3.3l2.3-2.3v-3.3L15.9,49.6z M14.1,51.5h0.5v1.2l-0.1,1.5h-0.2L14,52.7
+			C14,52.7,14.1,51.5,14.1,51.5z M14.3,55.4c-0.2,0-0.3-0.2-0.3-0.3c0-0.2,0.2-0.3,0.3-0.3c0.2,0,0.3,0.2,0.3,0.3
+			S14.5,55.4,14.3,55.4z"/>
+		<rect x="9.6" y="48.8" class="st2" width="9.3" height="9.3"/>
+	</g>
+</g>
+</svg>

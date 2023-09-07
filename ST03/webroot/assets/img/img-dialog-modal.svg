@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2020 Robert Bosch GmbH Copyright (C) 2020 Robert Bosch Manufacturing Solutions GmbH, Germany. All rights reserved.
+  -->
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 224 64" style="enable-background:new 0 0 224 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#EFEFF0;stroke-width:0.9023;}
+	.st1{fill:#EFEFF0;}
+	.st2{fill:none;stroke:#333333;stroke-width:0.6924;stroke-miterlimit:10;}
+	.st3{fill:#7FAAC8;}
+</style>
+<rect x="57.4" y="1.1" class="st0" width="109.2" height="61.9"/>
+<rect x="65.4" y="25.6" class="st1" width="76.1" height="8.4"/>
+<rect x="65.4" y="12.9" class="st1" width="39.7" height="8.4"/>
+<g>
+	<line class="st2" x1="153" y1="12.9" x2="158.5" y2="7.4"/>
+	<line class="st2" x1="158.5" y1="12.9" x2="153" y2="7.4"/>
+</g>
+<g>
+	<path class="st3" d="M157.5,46.6v10.2h-30.4V46.6H157.5 M158.5,45.6h-32.4v12.2h32.4V45.6L158.5,45.6z"/>
+</g>
+</svg>

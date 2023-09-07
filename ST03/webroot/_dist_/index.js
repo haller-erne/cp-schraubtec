@@ -150,10 +150,10 @@ globalThis.UpdateParams = function(paramStr)
 
 	inpTol[0].inp.value = param.Pos.radius;
 	inpTol[1].inp.value = param.Pos.height;
-	inpTol[2].inp.value = 0;	// offset
+	inpTol[2].inp.value = param.Pos.offset;
 	inpTol[0].cfgval = param.Pos.radius;
 	inpTol[1].cfgval = param.Pos.height;
-	inpTol[2].cfgval = 0;		// offset
+	inpTol[2].cfgval = param.Pos.offset;
 
 	selectTol(e, param.Pos.tolerance)
 }

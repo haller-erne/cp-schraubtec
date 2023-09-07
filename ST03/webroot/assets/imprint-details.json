@@ -1,0 +1,13 @@
+{
+  "name": "TASS Set-up",
+  "version": "1.1.1",
+  "contactAtBosch": "https://www.boschrexroth.com/schraubtechnik",
+  "contactMail": "Service.JT@boschrexroth.de",
+  "address": {
+    "name": "Bosch Rexroth AG",
+    "street": "Fornsbacher Str. 92",
+    "city": "71540 Murrhardt",
+    "country": "GERMANY"
+  },
+  "boardOfManagement": "Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23192\nVorstand: Dr. Steffen Haack (Vorsitzender), Thomas Donato, Holger von Hebel, Reinhard Schäfer, Dr. Marc Wucherer\nVorsitzende des Aufsichtsrats: Filiz Albrecht"
+}

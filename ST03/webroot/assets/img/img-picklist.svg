@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2020 Robert Bosch GmbH Copyright (C) 2020 Robert Bosch Manufacturing Solutions GmbH, Germany. All rights reserved.
+  -->
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 224 64" style="enable-background:new 0 0 224 64;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#EFEFF0;}
+	.st1{fill:#005691;}
+	.st2{fill:none;stroke:#FFFFFF;stroke-width:0.61;stroke-miterlimit:10;}
+	.st3{fill:#BFC0C2;}
+	.st4{opacity:0.5;}
+	.st5{fill:#FFFFFF;}
+	.st6{fill:none;}
+</style>
+<title>img-picklist</title>
+<rect x="0.9" y="16" class="st0" width="101.8" height="20.3"/>
+<rect x="8.1" y="22.8" class="st1" width="7.3" height="7.3"/>
+<path class="st2" d="M9.4,26.5l1.5,1.5l3-3"/>
+<rect x="24.8" y="23.3" class="st3" width="33.4" height="6.3"/>
+<rect x="0.9" y="41.1" class="st0" width="101.8" height="20.4"/>
+<g class="st4">
+	<rect x="8.5" y="47.9" class="st5" width="6.4" height="6.4"/>
+</g>
+<rect x="24.7" y="48" class="st3" width="41.3" height="6.3"/>
+<rect x="121.7" y="41.1" class="st0" width="101.8" height="20.4"/>
+<g class="st4">
+	<rect x="129.3" y="47.9" class="st5" width="6.4" height="6.4"/>
+</g>
+<rect x="145.5" y="48" class="st3" width="19.7" height="6.3"/>
+<rect x="121.7" y="16" class="st0" width="101.8" height="20.3"/>
+<g class="st4">
+	<rect x="129.3" y="22.9" class="st5" width="6.4" height="6.4"/>
+</g>
+<rect x="145.5" y="22.9" class="st3" width="38.2" height="6.3"/>
+<g class="st4">
+	<path d="M113.6,50l-3.1-3.2l3.2-3.2l0.3,0.3l-2.9,2.9l2.9,2.9L113.6,50z"/>
+	<rect x="107.5" y="42" class="st6" width="9.7" height="9.7"/>
+</g>
+<path d="M111.1,27.5l3.2,3.2l-3.2,3.2l-0.3-0.3l2.9-2.9l-2.9-2.9L111.1,27.5z"/>
+<rect x="107.5" y="25.8" class="st6" width="9.7" height="9.7"/>
+<rect x="121.7" y="3.5" class="st0" width="31" height="8.4"/>
+<rect x="0.9" y="3.5" class="st0" width="44.8" height="8.4"/>
+</svg>

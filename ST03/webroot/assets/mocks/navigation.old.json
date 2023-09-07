@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Inbetriebnahme",
+    "url": "/",
+    "position": 0,
+    "icon": "bosch-ic-wrench-calibrate",
+    "routerLinkActiveOptions": {
+        "exact": true
+      }
+  },
+  {
+    "title": "Analyse",
+    "url": "analyse",
+    "position": 1,
+    "icon": "bosch-ic-analysis"
+  },
+  {
+    "title": "Kalibrierung",
+    "url": "kalibrierung",
+    "position": 2,
+    "icon": "bosch-ic-calibration"
+  }
+]

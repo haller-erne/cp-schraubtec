@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright (C) 2020 Robert Bosch GmbH Copyright (C) 2020 Robert Bosch Manufacturing Solutions GmbH, Germany. All rights reserved.
+  -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg75"
+   version="1.1"
+   viewBox="0 0 224 64">
+  <metadata
+     id="metadata79">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>img-progressbar</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs65">
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(253575.16 -226.88) scale(153.58 9.6)"
+       y2="26.96"
+       x2="-1650.2"
+       y1="26.96"
+       x1="-1651"
+       id="a">
+      <stop
+         id="stop58"
+         stop-color="#005c95"
+         offset="0" />
+      <stop
+         id="stop60"
+         stop-color="#007bc7"
+         offset="0.5" />
+      <stop
+         id="stop62"
+         stop-color="#80bde3"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <title
+     id="title67">img-progressbar</title>
+  <rect
+     id="rect69"
+     fill-opacity="0"
+     fill="#bfe3f3"
+     height="38.7"
+     width="227.2"
+     y="12.7"
+     x="-1.6" />
+  <rect
+     id="rect71"
+     fill="#dfdfe0"
+     height="7.7"
+     width="198.2"
+     y="28.1"
+     x="13.9" />
+  <rect
+     id="rect73"
+     fill="url(#a)"
+     height="7.7"
+     width="123.7"
+     y="28.1"
+     x="13.9" />
+</svg>

@@ -10,6 +10,13 @@ local M = {
         pos = nil,      -- the database configured position (if any)
     },
     key = nil,          -- if nil, then no position enabled task, else <Part+Job+Task>
+    defaults = {
+        posx = 10, posy = 10, posz = 10,    -- (float) location
+        dirx = 0, diry = 0, dirz = 0,
+        radius = 20,                        -- tolerance radius
+        height = 20,                        -- tolerance height
+        offset = 0,                         -- tool head offset/length
+    }
 }
 local initialized = nil
 
@@ -96,11 +103,15 @@ function M.DecodePos(ToolDefPos, id)
         -- nothing stored in the database
         local pos = {      				-- table with position info
             id = id,    				        -- position_id (is unique in the job context)
-            posx = 10, posy = 10, posz = 10,    -- (float) location
-            dirx = 0, diry = 0, dirz = 0,
-            radius = 20,                        -- tolerance radius
-            height = 20,                        -- tolerance height
-            offset = 0,                         -- tool head offset/length
+            posx = M.defaults.posx, 
+            posy = M.defaults.posy, 
+            posz = M.defaults.posz,            -- (float) location
+            dirx = M.defaults.dirx, 
+            diry = M.defaults.diry, 
+            dirz = M.defaults.dirz,
+            radius = M.defaults.radius,                        -- tolerance radius
+            height = M.defaults.height,                        -- tolerance height
+            offset = M.defaults.offset,                         -- tool head offset/length
         }
         return pos
     end
@@ -269,6 +280,9 @@ function M.StopTasks(JobName)
     M.curtask.task = ''
 end
 
+M.save_reference = function(x, y)
+    -- TODO: forward to actual driver
+end
 
 -- initialize the module, read config, etc.
 -- TODO: improve reading ini file, so far only works for OPENPROTOCOL tools...
@@ -463,7 +477,7 @@ end
 -- SIDEPANEL
 --------------------------------------------------------------------------------
 -- Wire up the panel button events
-local Positioning_SidePlanel_Url = 'http://127.0.0.1:59990/index.html'
+local Positioning_SidePlanel_Url = 'http://127.0.0.1:59990/positioning.html'
 local function ShowSidePanel()
     Browser.Show('SidePanel', Positioning_SidePlanel_Url)
 end
@@ -517,7 +531,7 @@ local function OnSidePanelMsg(name, cmd)
             local p = {
                 Job = M.curtask.job,
                 Task = M.curtask.task,
-                Tool = 1,                       -- TODO
+                Tool = M.curtask.Tool,            -- TODO: tool name?
                 Pos = M.curtask.pos
             }
             local par = json.encode(p)
@@ -525,16 +539,21 @@ local function OnSidePanelMsg(name, cmd)
             return
         elseif o.cmd == 'set-params' then
             --M.pos_cfg.tolerance = o.params.Pos.tolerance
-            M.pos_cfg.radius    = o.params.Pos.radius
-            M.pos_cfg.height    = o.params.Pos.height
-            M.pos_cfg.offset    = o.params.Pos.offset
+            M.curtask.pos.radius    = o.params.Pos.radius
+            M.curtask.pos.height    = o.params.Pos.height
+            M.curtask.pos.offset    = o.params.Pos.offset
+            -- update defaults
+            M.defaults.radius       = o.params.Pos.radius
+            M.defaults.height       = o.params.Pos.height
+            M.defaults.offset       = o.params.Pos.offset
             return
 
         elseif o.cmd == 'save-ref' then
-            if type(M.pos_cur) == 'table' then
-                M.cfg.offs_len = M.pos_cur.len
-                M.cfg.offs_rad = M.pos_cur.rad
-                save_reference(M.cfg.offs_len, M.cfg.offs_rad)
+            if type(chn.pos) == 'table' then
+                -- TDOD: fix this!
+                M.cfg.offs_len = chn.pos.len
+                M.cfg.offs_rad = chn.pos.rad
+                M.save_reference(M.cfg.offs_len, M.cfg.offs_rad)
             end
             return
 
