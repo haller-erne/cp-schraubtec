@@ -20,12 +20,12 @@ function _M.registration(tool, ini_params)
 	if channel ~= nil then
 		return 'multiple tool definition'
 	end
-	
+
 	-- check initialization parameters
 	local cfg = {}
 
 	-- pick2light parameters
-	
+
     -- Blink bit: 0/1
     cfg.ipaddr = ini_params.IPADDR
 	-- Acknowledge all input bit: 0-7
@@ -34,7 +34,7 @@ function _M.registration(tool, ini_params)
 	if cfg.ipport == nil then
 	    cfg.ipport = 5003
 	end
-	
+
 	-- register channel
 	_M.channels[tool] = {
 		tool = tool,
@@ -53,7 +53,7 @@ function _M.registration(tool, ini_params)
         drv = flowlight,
         flowlight.Init(cfg.ipaddr, cfg.ipport)
 	}
-	
+
 	return 'OK'
 end
 --------------------------------------------------------------------------------------------------------------------------
