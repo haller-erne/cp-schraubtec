@@ -4,8 +4,8 @@
 --       tool, but expands the already existing OpenProtocol tool registered
 --       for a specified (OpenProtocol) tool/channel
 -- NOTE: Define the overly tool number in the [LUA_TASS] section in station.ini
--- NOTE: Do not register this tool type in station.ini as Lua-Tool, only 
---       load it in config.lua 
+-- NOTE: Do not register this tool type in station.ini as Lua-Tool, only
+--       load it in config.lua
 -- NOTE: To define the additional behaviour for a tool, do the following:
 --       1. Add a copy of the tool definition with a new channel number to
 --          station. ini, e.g. if there is an OpenProtocol tool CHANNEL_04,
@@ -18,7 +18,7 @@
 package.cpath = package.cpath .. ';./lualib/vclua/?.dll'
 local struct = require("struct")    -- see http://www.inf.puc-rio.br/~roberto/struct/
 local tass = require ('luatass')
-local json = require('json')	
+local json = require('cjson')
 CurveSeq = 0
 tmpcurve = {}
 TassUiValues = {
@@ -28,19 +28,19 @@ TassUiValues = {
     LA = 0
 }
 local function format_curve(res,action,angle,torque,par,resultCode,limitCheck)
-        local normc =           
+        local normc =
             {
                 a = CloneTable(res.NormalizedCurve.A),
                 t = CloneTable(res.NormalizedCurve.T),
                 pointCount = res.NormalizedCurve.PointCount
             }
-            
 
-    tmpcurve = 
 
-           {    
+    tmpcurve =
+
+           {
                 normOnly = false,
-                crv = 
+                crv =
                 {
                     name = action.tasssn .. '[' .. tostring(CurveSeq) .. ']',
                     state = 'OK',
@@ -53,7 +53,7 @@ local function format_curve(res,action,angle,torque,par,resultCode,limitCheck)
                     torque = torque,
                     time = os.date("!%Y-%m-%dT%H:%M:%SZ")
                 },
-                par = 
+                par =
                 {
                     valid = true,
                     m1_cali = par.M1_cali,
@@ -77,11 +77,11 @@ local function format_curve(res,action,angle,torque,par,resultCode,limitCheck)
                     t1 = par.T1,
                     sn = "Valid"
                 },
-                res = 
+                res =
                 {
                     resultCode = resultCode,
                     limitCheck = limitCheck,
-                    result = 
+                    result =
                     {
                         result = res.Result,
                         m1 = res.M1,
@@ -123,7 +123,7 @@ local function format_curve(res,action,angle,torque,par,resultCode,limitCheck)
         tmpcurve.viewState.state = string.sub(tostring(((res.M2-res.M1)/res.G_AR.dM)),1,4)
     end
 end
-    
+
 local _TOOL = {
 	type = 'LUA_TASS',
 	channels = {},
@@ -148,33 +148,37 @@ local _TOOL = {
     process_tool_result = function(tool)
 	    local r = gui_lua_support.ResultValues
 	    local c = r.Curve
-	    
-	    
+	    if c == nil then
+            XTRACE(1, '  TASS: no curve available!')
+	        return nil
+	    end
 	    local Version, Label, CurveType, CurveOrd, PointNum = struct.unpack('<Lc8LLL',c)
 	    if PointNum == nil then
+            XTRACE(1, '  TASS: error decoding curve!')
 	        return nil
-	    end 
-	    
+	    end
+        XTRACE(1, string.format('  curve: %d points', PointNum))
+
 	    local StepOfs = {}
-	    for i=25,101,4 do
+	    for i = 25,101,4 do
 	        local d = struct.unpack("L",c:sub(i,i+3))
 	        table.insert(StepOfs,d)
 	    end
-	    
+
 	    local ThresholdIdx, ThresholdVal = struct.unpack('<ff',c,105)
-	    
+
 	    local time = {}
 	    local angle = {}
 	    local torque = {}
-	    
+
 	    local ofs = 113
-	    
+
 	    local mask = '<'
-	    for i=1,CurveOrd do 
+	    for i = 1,CurveOrd do
 	        mask = mask.. 'f'
 	    end
-	    
-	    for i=1,PointNum do 
+
+	    for i=1,PointNum do
 	        local bin = c:sub(ofs, ofs+CurveOrd*4-1)
 	        local x, y, z = struct.unpack(mask,bin)
 	        if CurveType == 9 then
@@ -192,21 +196,21 @@ local _TOOL = {
         end
 	    local action = get_object_property(3)
 	    action = { tasssn = "178000038" }
-	    
-        local par = ReadIniSection("TASS_" .. tostring(action.tasssn)) 
-        for k,v in pairs(par) do par[k] = tonumber(v) end  
-        
+
+        local par = ReadIniSection("TASS_" .. tostring(action.tasssn))
+        for k,v in pairs(par) do par[k] = tonumber(v) end
+
         local msg = formatParams(par)
 	    msg = json.encode(msg)
 	    local command = string.format('window.OgsIpc.addParameters(%s)',msg)
-	    Browser.ExecJS_sync('ProcessView',command)   
-        
+	    Browser.ExecJS_async('ProcessView',command)
+
         local crv = { PointCount = PointNum, A = angle, T = torque }
 
         local resultCode,res = tass.calculate(crv, par)
         if resultCode == nil then
             print(res)         -- parameter/lua error
-        else 
+        else
             if resultCode == 0 then  -- calculation OK
                 -- caclulation successful, now check if everything is within limits
             local limitCheck = tass.checklimits(res, par)
@@ -224,37 +228,37 @@ local _TOOL = {
         end
         --print("done.")
 
-       
+
         format_curve(res,action,angle,torque,par,resultCode,limitCheck)
 
 
         local msg1 = json.encode(tmpcurve)
-        local msg = '{ "items": [ '..msg1..' ]}' 
-       
+        local msg = '{ "items": [ '..msg1..' ]}'
+
 	    local cmd2 = 'window.OgsIpc.addCurveFiles(' .. msg .. ')'
 
-	    Browser.ExecJS_sync('ProcessView',cmd2)  
-	    
+	    Browser.ExecJS_async('ProcessView',cmd2)
+
 	    TassUiValues.M1 = res.M1
 	    TassUiValues.M2 = res.M2
 	    TassUiValues.W3 = res.W3
 	    TassUiValues.LA = res.LA
-	    
+
         r.Param1 		= r.Param1
         r.Param1_min 	= res.M1
         r.Param1_max 	= res.M2
         r.Param2 		= r.Param2
         r.Param2_min 	= res.W3
         r.Param2_max 	= res.LA
-        
+
         r.Step = '3A'
-        
+
 	    CurveSeq = CurveSeq + 1
         return 1
     end,
     ------------------------------------------------
 	get_footer_string = function(tool)
-	
+
 	    local r = gui_lua_support.ResultValues
 	    if tool ~= r.Tool then return '' end
 --[[
@@ -282,7 +286,7 @@ local _TOOL = {
     		Step 		= 'A1',
 	    	Barcode     = '',
 	    },
-]]	
+]]
 	    return string.format('M1/M2 %s/%sNm W3 %sDeg', number_as_text(TassUiValues.M1,'', 2), number_as_text(TassUiValues.M2,'',2), number_as_text(TassUiValues.W3,'',2))
 	end,
 }
@@ -300,11 +304,11 @@ local function overlay_tools()
             XTRACE(16, string.format('LUA_TASS: Added overlay tool %d for %s...', tool, param_as_str(k)))
         else
             XTRACE(1, string.format('LUA_TASS: No overlay tool %s or not found!', param_as_str(k)))
-        end        
+        end
     end
 end
 
-function formatParams(param) 
+function formatParams(param)
     par = {
         valid = true,
         m1_cali = param.M1_cali,
