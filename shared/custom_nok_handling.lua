@@ -83,7 +83,10 @@ function GetNokBehaviour(Tool, State, JobName, TaskName,  RundownName, rework)
     if Tool == 1 then   -- GWK
         return process_nok_repeat + process_nok_dont_check_rights
     end
---[[    
+    if Tool >= 11 and Tool <= 13 then   -- TASS measurements - no need to loosen here!
+        return process_nok_repeat + process_nok_dont_check_rights
+    end
+--[[
     if true then
         user_rights[1000] = 1000
         return -1
@@ -95,7 +98,7 @@ function GetNokBehaviour(Tool, State, JobName, TaskName,  RundownName, rework)
             return process_nok_repeat + process_nok_dont_check_rights
         end
     end
-]]--    
+]]--
     return -1       -- use behaviour from station.ini
 end
 
