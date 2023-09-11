@@ -1,0 +1,48 @@
+Generell hätte ich pro Station 20 Adressen reserviert, die grundlegenden Netzwerkeinstellungen sind:
+
+-	Netzwerk 192.168.1.0/24 (Netmask 255.255.255.0)
+-	Gateway 192.168.1.254 (bitte in den Geräten eintragen, auch wenn das aktuell nicht benötigt wird)
+-	DNS: 192.168.1.254 (oder leer lassen)
+-	Alle Geräte für statische IP-Adresse konfiguriert, falls DHCP-Server im Router/Accesspoint vorhanden, diesen abschalten!
+
+Station 1 (PTS): 192.168.1.20 – 192.168.1.39
+-	192.168.1.20: OGS-PC
+-	192.168.1.21: CS351 (für ErgoSpin)
+-	192.168.1.22: Nexo
+-	192.168.1.23: GWK Operator 22
+-	192.168.1.24: JH WLan-Socket-Belt
+-	192.168.1.25-29: Reserve
+-	192.168.1.30: ART SmartTrack
+-	192.168.1.31: JH Carboarm (IO-Link Master)
+-	192.168.1.32: Pick2Light
+-	192.168.1.33: i.o.-Button
+-	192.168.1.34-38: Reserve
+-	192.168.1.39: Access-Point für WLan-Teilnehmer der Station
+
+
+Station 2 (GWK): 192.168.1.40 – 192.168.1.59
+-	192.168.1.40: OGS-PC
+-	192.168.1.41: Nexo
+-	192.168.1.42: GWK Operator 22
+-	192.168.1.43: JH WLan-Socket-Belt
+-	192.168.1.44-29: Reserve
+-	192.168.1.50: ART SmartTrack
+-	192.168.1.51-58: Reserve
+-	192.168.1.59: Access-Point für WLan-Teilnehmer der Station
+
+Station 3 (JH): 192.168.1.60 – 192.168.1.79
+-	192.168.1.60: OGS-PC
+-	192.168.1.61: CS351 (für ErgoSpin)
+-	192.168.1.62: Nexo
+-	192.168.1.63: GWK Operator 22
+-	192.168.1.64-69: Reserve
+-	192.168.1.70: ART SmartTrack
+-	192.168.1.71: JH Handyflex (IO-Link Master)
+-	192.168.1.72-38: Reserve
+-	192.168.1.79: Access-Point für WLan-Teilnehmer der Station
+
+Gemeinsame Infrastruktur (PC für ActiveCockpit): 192.168.1.100 – 192.168.1.253
+-	192.168.1.100: Zentraler PC (ActiveCockpit)
+-	192.168.1.101: Zentraler PC (h+e Sys3xxGateway, QualityR, MQTT-Broker und NodeRED)
+-	192.168.1.254: zentraler Router (falls nötig für Internetzugriff, ggf. AccessPoint für stationsunabhängige WLan-Teilnehmer)
+
