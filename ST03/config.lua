@@ -14,6 +14,7 @@ requires = {
 	"lua_tool_delay",
 	"lua_tool_tass",
 	"station_io",
+	"heEventLogMqtt",
 	-- "lua_tool_mqtt",
 	"sim",
 }

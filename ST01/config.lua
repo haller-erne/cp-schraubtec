@@ -15,6 +15,7 @@ requires = {
 	"lua_tool_tass",
 	"station_io",
 	-- "lua_tool_mqtt",
+	"heEventLogMqtt",
 	"sim",
 	"lua_tool_flowlight",
 }
