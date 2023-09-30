@@ -107,6 +107,7 @@ var inpTol = [
 	{ inp: document.querySelector('#inpRadius') },
 	{ inp: document.querySelector('#inpHeight') },
 	{ inp: document.querySelector('#inpOffset') },
+	{ inp: document.querySelector('#inpAngle') },
 ]
 const imgTol = document.querySelector('#imgTol');
 const btnRef = document.querySelector('#btnRef');
@@ -129,6 +130,12 @@ var domPos = {
 	dirx : document.querySelector('#txtActRadX'),
 	diry : document.querySelector('#txtActRadY'),
 	dirz : document.querySelector('#txtActRadZ'),
+	dPosx : document.querySelector('#txtDeltaPosX'),
+	dPosy : document.querySelector('#txtDeltaPosY'),
+	dPosz : document.querySelector('#txtDeltaPosZ'),
+	dDirx : document.querySelector('#txtDeltaRadX'),
+	dDiry : document.querySelector('#txtDeltaRadY'),
+	dDirz : document.querySelector('#txtDeltaRadZ'),
 	inpos : document.querySelector('#txtInPos'),
 	state : document.querySelector('#txtStatus'),
 };
@@ -151,9 +158,11 @@ globalThis.UpdateParams = function(paramStr)
 	inpTol[0].inp.value = param.Pos.radius;
 	inpTol[1].inp.value = param.Pos.height;
 	inpTol[2].inp.value = param.Pos.offset;
+	inpTol[3].inp.value = param.Pos.angle;
 	inpTol[0].cfgval = param.Pos.radius;
 	inpTol[1].cfgval = param.Pos.height;
 	inpTol[2].cfgval = param.Pos.offset;
+	inpTol[3].cfgval = param.Pos.angle;
 
 	selectTol(e, param.Pos.tolerance)
 }
@@ -180,6 +189,12 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dirx.value = pos.Pos.dirx;
 		domPos.diry.value = pos.Pos.diry;
 		domPos.dirz.value = pos.Pos.dirz;
+		domPos.dPosx.value = pos.Delta.posx;
+		domPos.dPosy.value = pos.Delta.posy;
+		domPos.dPosz.value = pos.Delta.posz;
+		domPos.dDirx.value = pos.Delta.dirx;
+		domPos.dDiry.value = pos.Delta.diry;
+		domPos.dDirz.value = pos.Delta.dirz;
 	} else {
 		domPos.state.value = pos.Error;
 		domPos.inpos.value = '';
@@ -189,6 +204,12 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dirx.value = '';
 		domPos.diry.value = '';
 		domPos.dirz.value = '';
+		domPos.dPosx.value = '';
+		domPos.dPosy.value = '';
+		domPos.dPosz.value = '';
+		domPos.dDirx.value = '';
+		domPos.dDiry.value = '';
+		domPos.dDirz.value = '';
 	}		
 	// Schedule the next update, if the window is still visible
 	if (OGS.UpdateTimer != null) {
@@ -202,6 +223,7 @@ globalThis.UpdateUser = function(enableAdmin)
 	inpTol[0].inp.readOnly = !enableAdmin;
 	inpTol[1].inp.readOnly = !enableAdmin;
 	inpTol[2].inp.readOnly = !enableAdmin;
+	inpTol[3].inp.readOnly = !enableAdmin;
 	btnTol[0].btn.disabled = !enableAdmin;
 	btnTol[1].btn.disabled = !enableAdmin;
 	btnTol[2].btn.disabled = !enableAdmin;
@@ -252,6 +274,7 @@ var inputTol = function(e, idx) {	// click event
 inpTol[0].inp.addEventListener('blur', (e) => inputTol(e, 0));
 inpTol[1].inp.addEventListener('blur', (e) => inputTol(e, 1));
 inpTol[2].inp.addEventListener('blur', (e) => inputTol(e, 2));
+inpTol[3].inp.addEventListener('blur', (e) => inputTol(e, 3));
 
 var saveChanges = function(e) {
 	var tolerance = 0;
@@ -271,6 +294,7 @@ var saveChanges = function(e) {
 				radius: inpTol[0].inp.value,
 				height: inpTol[1].inp.value,
 				offset: inpTol[2].inp.value,
+				angle: inpTol[3].inp.value,
 				//domParam.posx.value
 				//domParam.posy.value
 				//domParam.posz.value

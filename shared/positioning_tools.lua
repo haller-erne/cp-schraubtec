@@ -48,4 +48,72 @@ function M.get_dev_params(section, name, tbl)
     return params
 end
 
+-- return inpos, distx, disty, distz, dax, day, daz
+M.calc_distance_sphere = function(curpos, exppos)
+    -- compare current and learned positions
+	local dif_x = curpos.posx - exppos.posx
+	local dif_y = curpos.posy - exppos.posy
+	local dif_z = curpos.posz - exppos.posz
+
+    -- check, if the current position is within our cylinder
+    local distxyz = (dif_x*dif_x) + (dif_y*dif_y) + (dif_Z*dif_z)
+    local inpos = (distxyz <= (exppos.radius*exppos.radius))
+    -- currently, we don't care about the Z position!
+
+    -- for a sphere, there is no need to check the angle
+    return inpos, dif_x, dif_y, dif_z, 0, 0, 0
+end
+
+-- return inpos, distx, disty, distz, dax, day, daz
+M.calc_distance_cylinder = function(curpos, exppos)
+    -- compare current and learned positions
+	local dif_x = curpos.posx - exppos.posx
+	local dif_y = curpos.posy - exppos.posy
+	local dif_z = curpos.posz - exppos.posz
+
+    -- TODO: implement cylinder orientation, currently 
+    -- distance is only idicated from the middle point!
+
+    -- check, if the current position is within our cylinder
+    local distxy = (dif_x*dif_x) + (dif_y*dif_y)
+    local inpos = (distxy <= (exppos.radius*exppos.radius))
+    -- currently, we don't care about the Z position!
+
+    -- TODO: should check the angle!
+    return inpos, dif_x, dif_y, dif_z, 0, 0, 0
+end
+
+-- return inpos, distx, disty, distz, dax, day, daz
+M.calc_distance_frustum = function(curpos, exppos)    -- Kegelstumpf
+    -- FIXME: replace with "correct" function
+    return M.calc_distance_cylinder(curpos, exppos)
+end
+
+-- return inpos, distx, disty, distz, dax, day, daz
+M.calc_distance_cylinder_frustum = function(curpos, exppos)
+    -- FIXME: replace with "correct" function
+    return M.calc_distance_cylinder(curpos, exppos)
+end
+
+-- return inpos, distx, disty, distz, dax, day, daz
+M.calc_distance = function(curpos, exppos)
+    if exppos.tolerance == 0 then
+        -- Sphere
+        return M.calc_distance_sphere(curpos, exppos)
+    elseif exppos.tolerance == 1 then
+        -- Cylinder
+        return M.calc_distance_cylinder(curpos, exppos)
+    elseif exppos.tolerance == 2 then
+        -- Frustum
+        return M.calc_distance_frustum(curpos, exppos)
+    elseif exppos.tolerance == 3 then
+        -- Frustum+Cylinder
+        return M.calc_distance_cylinder_frustum(curpos, exppos)
+    else
+        -- assume cylinder
+        exppos.tolerance = 1
+        return M.calc_distance_cylinder(curpos, exppos)
+    end
+end
+
 return M

@@ -53,11 +53,11 @@ body {
 
 .inputcontainer {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 2fr 2fr;
+  grid-template-columns: minmax(120px, 1fr) 2fr minmax(120px, 1fr) 2fr;
   font-size: 18px;
 }
 .inputcontainer input {
-  max-width: 100px
+  max-width: 60px
 }
 
 .workspacecontainer {

@@ -13,8 +13,13 @@ local M = {
     defaults = {
         posx = 10, posy = 10, posz = 10,    -- (float) location
         dirx = 0, diry = 0, dirz = 0,
+        tolerance = 0,                      -- tolerance kind (0=sphere, 1=cylinder, 2=frustum, 3=cylinder+frustrum)
         radius = 20,                        -- tolerance radius
         height = 20,                        -- tolerance height
+        radius_of_top = 20,
+        radius_of_bottom = 20,
+        height_to_top = 20,
+        height_to_bottom = 20,
         offset = 0,                         -- tool head offset/length
     }
 }
@@ -34,7 +39,7 @@ local drivers = {
 --   LoadDriverModule(name, module) to load <module>.lua and register it as <name>
 M.LoadDriverModule = function(name, module)
     if module == nil then module = name end
-    drivers[name] = require(name)
+    drivers[name] = require(module)
 end
 
 -- new position info from hardware received
@@ -103,11 +108,11 @@ function M.DecodePos(ToolDefPos, id)
         -- nothing stored in the database
         local pos = {      				-- table with position info
             id = id,    				        -- position_id (is unique in the job context)
-            posx = M.defaults.posx, 
-            posy = M.defaults.posy, 
+            posx = M.defaults.posx,
+            posy = M.defaults.posy,
             posz = M.defaults.posz,            -- (float) location
-            dirx = M.defaults.dirx, 
-            diry = M.defaults.diry, 
+            dirx = M.defaults.dirx,
+            diry = M.defaults.diry,
             dirz = M.defaults.dirz,
             radius = M.defaults.radius,                        -- tolerance radius
             height = M.defaults.height,                        -- tolerance height
@@ -147,8 +152,8 @@ function M.SelectPos(tool, JobName, BoltName, PosCtrl, ToolPosDef)
     local posname = JobName..BoltName
     if M.posname ~= posname or M.db_cfg ~= ToolPosDef then
         -- task changed - update positioning system
-        XTRACE(16, string.format("Selected pos changed: Job=%s task=%s Cfg=%s",
-            param_as_str(JobName), param_as_str(BoltName), param_as_str(ToolPosDef)))
+        XTRACE(16, string.format("Selected pos changed: Job=%s task=%s pos=%s, Cfg=%s",
+            param_as_str(JobName), param_as_str(BoltName), param_as_str(PosCtrl), param_as_str(ToolPosDef)))
         M.posname = posname
         M.db_cfg = ToolPosDef
         M.curtask.tracking = true
@@ -191,19 +196,9 @@ function M.GetDistance(tool, curpos, exppos)
         return nil, 'posx info is empty!'
     end
 
-    -- compare current and learned positions
-	local dif_x = curpos.posx - exppos.posx
-	local dif_y = curpos.posy - exppos.posy
-	local dif_z = curpos.posz - exppos.posz
+    local inpos, dif_x, dif_y, dif_z, r_x, r_y, r_z = tools.calc_distance(curpos, exppos)
 
-    -- TODO: implement more matching primitives
-
-    -- check, if the current position is within our cylinder
-    local distxy = (dif_x*dif_x) + (dif_y*dif_y)
-    local inpos = (distxy <= (exppos.radius*exppos.radius))
-    -- currently, we don't care about the Z position!
-
-	return inpos, dif_x, dif_y, dif_z
+    return inpos, dif_x, dif_y, dif_z
 end
 
 -- Get current position
@@ -223,7 +218,7 @@ function M.GetCurrentToolPos(tool)
             chn.pos = pos
             chn.err = nil
         else
-            XTRACE(1, 'Positioning: error returned from GetCurrentToolPosition!')
+            XTRACE(1, 'Positioning: error returned from GetCurrentToolPosition: '..param_as_str(inpos))
             chn.pos = nil
             chn.err = inpos
             return nil, inpos
@@ -231,7 +226,8 @@ function M.GetCurrentToolPos(tool)
         return chn.pos, inpos
     else
         -- chn.pos is set by calling one of the UpdatePos_XXX functions!
-        -- return the last reported position
+        -- return the last reported position and nil for inpos - this indicates,
+        --   to check with our own code for InPos
         return chn.pos
     end
 
@@ -249,11 +245,20 @@ function M.StartTask(tool, JobName)
     end
     return 0        -- not implemented in driver, so skip
 end
-function M.StartTasks(JobName)
-    for tool, chn in pairs(M.channels) do
-        M.StartTask(tool, JobName)
+function M.StartTasks(Tool, JobName)
+    -- make sure to activate tracking only for a single tool
+    if M.tracking then
+        if M.tracking == Tool then
+            return                      -- we are already tracking this tool
+        else
+            M.StopTask(Tool, JobName)   -- stop tracking the old tool
+        end
     end
-    M.tracking = true
+    --for tool in pairs(M.channels) do    -- for tool,chn in pairs(...)
+    --    M.StartTask(tool, JobName)
+    --end
+    M.StartTask(Tool, JobName)
+    M.tracking = Tool
 end
 
 function M.StopTask(tool, JobName)
@@ -269,10 +274,13 @@ function M.StopTask(tool, JobName)
     return 0        -- not implemented in driver, so skip
 end
 function M.StopTasks(JobName)
-    for tool, chn in pairs(M.channels) do
-        M.StopTask(tool, JobName)
+    if M.tracking then
+        --for tool in pairs(M.channels) do   -- for tool, chn in pairs(M.channels) do
+        --    M.StopTask(tool, JobName)
+        --end
+        M.StopTask(M.tracking, JobName)
     end
-    M.tracking = false
+    M.tracking = nil
     M.posname = nil
     M.pos_cfg = nil
     M.curtask.tracking = false
@@ -287,7 +295,6 @@ end
 -- initialize the module, read config, etc.
 -- TODO: improve reading ini file, so far only works for OPENPROTOCOL tools...
 local function Init()
-    local cfg, err
     M.channels = {}
 	local tbl = ReadIniSection('OPENPROTO')
 	if type(tbl) ~= 'table' then
@@ -310,7 +317,7 @@ local function Init()
                 chn.cfg = ini
                 chn.drv = drivers[ini.DRIVER]
                 M.channels[chn.chn] = chn
-                XTRACE(16, string.format("Positioning: Tool %d: added %s", chn.chn, v))
+                XTRACE(16, string.format("Positioning: Add Tool %d: %s", chn.chn, v))
                 if chn.drv.Init then
                     chn.drv.Init(chn)
                 end
@@ -324,7 +331,6 @@ end
 
 -- StatePoll is called cyclically
 local function OnStatePoll(info)
-
     local wf = info.Workflow
     if not initialized then
         XTRACE(16, "Init positioning...")
@@ -381,7 +387,8 @@ function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, Task
     M.curtask.Tool    = Tool
     local key = M.GetKey(JobName, BoltName)
     if TaskState_old ~= TaskState or TaskStep_old ~= TaskStep or M.key ~= key then
-        XTRACE(16, string.format('PS_CheckToolPosition: Tool=%d, Job=%s, Task=%s, PosCtrl=%d, TaskState=%d, TaskStep=%d',
+        XTRACE(16,
+            string.format('PS_CheckToolPosition: Tool=%d, Job=%s, Task=%s, PosCtrl=%d, TaskState=%d, TaskStep=%d',
             Tool, JobName, BoltName, PosCtrl, TaskState, TaskStep))
         TaskState_old = TaskState
         TaskStep_old = TaskStep
@@ -401,9 +408,10 @@ function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, Task
         M.curtask.task = ''
         return "Position control not enabled for this task!"
     end
-    if M.tracking ~= true then
+    if not M.tracking then
         XTRACE(16, 'Tracking: START: ' .. JobName .. ':' .. BoltName);
-        M.StartTasks(JobName)
+        --M.StartTasks(JobName)
+        M.StartTasks(Tool, JobName)
     end
 
 --    local initErr = Init()
@@ -412,9 +420,10 @@ function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, Task
     -- Notify driver of possible changes in expected position
     M.SelectPos(Tool, JobName, BoltName, PosCtrl, ToolPosDef)
     -- Get the current position
-    local pos, err = M.GetCurrentToolPos(Tool)
+    local pos, inpos = M.GetCurrentToolPos(Tool)
     if pos == nil then
         -- error!
+        local err = inpos
         M.InPos = -1
         return err -- "No position info available!"
     end
@@ -424,13 +433,19 @@ function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, Task
 --	end
 
     -- calculate difference
-    local inpos, dif_x,dif_y,dif_z = M.GetDistance(Tool, pos)
+    local inpos2, dif_x,dif_y,dif_z = M.GetDistance(Tool, pos)
+    if inpos == nil then
+        -- Driver did not return inpos info - use the M.GetDistance info.
+        -- * for ART (and others), inpos is returned from M.GetCurrentToolPos
+        -- * for simple sensors, we need to calculate it ourselfs (M.GetDistance)
+        inpos = inpos2
+    end
     if inpos == nil then
         -- no useful positioning info available???
         return 'No diff!'
     end
     M.InPos = inpos
-    if inpos == true then
+    if inpos == true or inpos == 1 then
         return true, "Ok"       -- in position
     else
         local diff = string.format("%+d/%+d/%+d", dif_x, dif_y, dif_z)
@@ -442,17 +457,20 @@ end
 function PS_TeachToolPosition(State, Tool, JobName, BoltName, PosCtrl, ToolPosDef)
 
 -- "parameter/return value" State: 	unknown = 0, teaching_in_process = 1, start_teaching = 2, stop_teaching = 3
-    if M.tracking ~= true then
+    if not M.tracking then
         XTRACE(16, 'Positioning: start tracking: ' .. JobName .. ':' .. BoltName);
-        M.StartTasks(JobName)
+        M.StartTasks(Tool, JobName)
     end
     M.curtask.PosCtrl = PosCtrl
     M.curtask.Tool    = Tool
 
     M.SelectPos(Tool, JobName, BoltName, PosCtrl, ToolPosDef)
-    local pos, err = M.GetCurrentToolPos(Tool)
+    local pos, inpos = M.GetCurrentToolPos(Tool)
     if pos == nil then
         -- error!
+        M.InPos = -1
+        local err = inpos
+        -- TODO: return the correct error!
         return 0
     end
 
@@ -463,11 +481,18 @@ function PS_TeachToolPosition(State, Tool, JobName, BoltName, PosCtrl, ToolPosDe
 
     -- this string will be used as ToolPosDef parameter by "PS_CheckToolPosition" function call
     local newToolPosDef = M.EncodePos(pos.posx, pos.posy, pos.posz, M.curtask.pos, pos.dirx, pos.diry, pos.dirz)
-    local inpos, dif_x,dif_y,dif_z = M.GetDistance(Tool, pos)
+    local inpos2, dif_x,dif_y,dif_z = M.GetDistance(Tool, pos)
+    if inpos == nil then
+        -- Driver did not return inpos info - use the M.GetDistance info.
+        -- * for ART (and others), inpos is returned from M.GetCurrentToolPos
+        -- * for simple sensors, we need to calculate it ourselfs (M.GetDistance)
+        inpos = inpos2
+    end
     if inpos == nil then
         -- no useful positioning info available???
         return 'No diff!'
     end
+    M.InPos = inpos
     local DisplayMsg = string.format("%+d/%+d/%+d", dif_x,dif_y,dif_z)
     return new_state, dif_z,dif_y,dif_x, newToolPosDef, DisplayMsg
 

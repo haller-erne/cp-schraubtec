@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>Clarity Core - Snowpack App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="positioning.css" />
   </head>
   <body cds-text="body bodypadding" cds-theme="dark"> <!-- cds-layout="p:lg"  -->
 
@@ -39,9 +39,15 @@
             <!-- todo: prevent chaning from user -->
             <div style="grid-column: 1"><label>Radius [mm]</label></div>
             <div><input id="inpRadius" type="number"></div>
-            <div style="grid-column: 1"><label>Höhe [mm]</label></div>
+            <div style="grid-column: 3"><label>Höhe [mm]</label></div>
             <div><input id="inpHeight" type="number"></div>
-            <div style="grid-column: 1"><label>Offset [mm]</label></div>
+            <div style="grid-column: 1"><label>Radius2 [mm]</label></div>
+            <div><input id="inpRadius2" type="number"></div>
+            <div style="grid-column: 3"><label>Höhe2 [mm]</label></div>
+            <div><input id="inpHeight2" type="number"></div>
+            <div style="grid-column: 1"><label>Winkel [°]</label></div>
+            <div><input id="inpAngle" type="number"></div>
+            <div style="grid-column: 3"><label>Offset [mm]</label></div>
             <div><input id="inpOffset" type="number"></div>
             <cds-button hidden style="grid-column: 3; grid-row-start: 1; grid-row-end: 3" id="btnTolSave" status="primary" action="outline">Save</cds-button>
           </div>

@@ -1,11 +1,10 @@
 local api = require('luaart')
-local json = require('cjson')
 
 local M =
 {
-    tracking = nil
+    tracking = nil,
+    --measureing = nil,
 }
-
 
 M.Init = function(chn)
     -- global ART DLL init
@@ -17,11 +16,22 @@ M.Init = function(chn)
             SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to initialize, err: %s!', tostring(err)))
             return nil
         end
-        M.dev = api.open()
+        local tbl = ReadIniSection('POSITIONING_ART')
+        if type(tbl) ~= 'table' then
+            -- SetLuaAlarm('ART', -2, 'AR-Tracking: station.ini section [POSITIONING_ART] missing!')
+            error('INI-section: "POSITIONING_ART": section missing!')
+        end
+        M.dev = api.open(tbl.IP, tbl.PORT)
     end
     chn.mod = {}
-    -- currently no config needed
     local cfg = {}
+    -- Add the tool mapping (only for the new API!)
+    if api._API_VERSION ~= nil and api._API_VERSION >= 0x000200 then
+        local ok, err = M.dev:add_tool(chn.chn, chn.cfg.TARGET, "Tool "..tostring(chn.chn))
+        if not ok then
+            error(string.format('ERROR: ART add tool failed: %s', err))
+        end
+    end
     chn.mod.cfg = cfg
     return nil -- OK!
 end
@@ -52,12 +62,18 @@ function M.SelectPos(chn, pos)
         SetLuaAlarm('ART', -2, string.format('AR-Tracking: Tool %d: Cannot set position, err=%s!',
             chn.chn, param_as_str(err)))
     end
+    -- also add tool offset
+    ok, err = M.dev:set_tool_offset(chn.chn, pos.offset)
+    if ok ~= true then
+        SetLuaAlarm('ART', -2, string.format('AR-Tracking: Tool %d: Cannot set offset, err=%s!',
+            chn.chn, param_as_str(err)))
+    end
 end
 
 function M.StartTask(chn, JobName)
     -- start the positioning system
     -- select the workspace
-    XTRACE(2, "START TASK")
+    XTRACE(2, string.format("[tool %d] START TASK", chn.chn))
     if not M.tracking then
         M.dev:set_workspace(JobName)
 
@@ -84,7 +100,7 @@ end
 
 function M.StopTask(chn, JobName)
     -- stop tracking
-    XTRACE(2, "STOP TASK")
+    XTRACE(2, string.format("[tool %d] STOP TASK", chn.chn))
     if M.tracking then
         local ret = M.dev:stop()
         if (ret == 0) then
@@ -102,6 +118,9 @@ end
 --    nil, error    if no position is available
 M.GetCurrentToolPos = function(chn, expectedpos)
 
+    -- TODO: check status
+    -- int status, err = M.dev:get_status()
+
     local inpos, pos  = M.dev:find_position(chn.chn)
     if inpos ~= nil then
 		if inpos == 1 then
@@ -116,6 +135,7 @@ M.GetCurrentToolPos = function(chn, expectedpos)
         -- some error
         return nil, pos -- pos is now an error string!
     end
+
 --[[
     local connected = M.IsConnected() and inpos ~= nil
     if not M.Connected and connected then
