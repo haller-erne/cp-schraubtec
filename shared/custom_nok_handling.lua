@@ -7,7 +7,7 @@ local M = {
 
 --[[
 -- Implement NOK counter handling
-local NOK_Counters = { 
+local NOK_Counters = {
     MaxAllowedNok = 5,      -- block tool after 5 NOKs for a single bolt
     counter = {},           -- clear NOK counters
     user_level = 0

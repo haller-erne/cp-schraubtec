@@ -195,11 +195,20 @@ local _TOOL = {
 	        ofs = ofs + CurveOrd*4
         end
 	    local action = get_object_property(3)
-	    action = { tasssn = "178000038" }
-
-        local par = ReadIniSection("TASS_" .. tostring(action.tasssn))
-        for k,v in pairs(par) do par[k] = tonumber(v) end
-
+        if not action or #action == 0 or not action.tasssn then
+            XTRACE(XPWARN, "WARNING: no TASS serial number defined, trying to use defaults!")
+            if tool == 11 then
+                action = { tasssn = "178000038" }
+            elseif tool == 12 then
+                action = { tasssn = "178000038" }
+            else
+                action = { tasssn = "178000038" }
+            end
+        end
+	    
+        local par = ReadIniSection("TASS_" .. tostring(action.tasssn)) 
+        for k,v in pairs(par) do par[k] = tonumber(v) end  
+        
         local msg = formatParams(par)
 	    msg = json.encode(msg)
 	    local command = string.format('window.OgsIpc.addParameters(%s)',msg)
