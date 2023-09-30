@@ -70,14 +70,24 @@ M.calc_distance_cylinder = function(curpos, exppos)
 	local dif_x = curpos.posx - exppos.posx
 	local dif_y = curpos.posy - exppos.posy
 	local dif_z = curpos.posz - exppos.posz
+	local dif_rx = curpos.dirx - exppos.dirx
+	local dif_ry = curpos.diry - exppos.diry
+	local dif_rz = curpos.dirz - exppos.dirz
 
-    -- TODO: implement cylinder orientation, currently 
+    -- TODO: implement cylinder orientation, currently
     -- distance is only idicated from the middle point!
 
     -- check, if the current position is within our cylinder
     local distxy = (dif_x*dif_x) + (dif_y*dif_y)
-    local inpos = (distxy <= (exppos.radius*exppos.radius))
     -- currently, we don't care about the Z position!
+    local inpos_xyz = (distxy <= (exppos.radius*exppos.radius))
+    -- check the angle distance
+    local inpos_rad = true
+    if exppos.angle and exppos.angle > 0 then
+        local distrad = (dif_rx*dif_rx) + (dif_ry*dif_ry)
+        inpos_rad = (distrad <= (exppos.angle*exppos.angle))
+    end
+    local inpos = inpos_xyz and inpos_rad
 
     -- TODO: should check the angle!
     return inpos, dif_x, dif_y, dif_z, 0, 0, 0

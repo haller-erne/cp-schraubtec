@@ -130,9 +130,15 @@ M.GetCurrentToolPos = function(chn, expectedpos)
 			    end
             end
 		end
+        if global_set_inpos then
+            global_set_inpos(inpos)
+        end
         return pos, inpos
     else
         -- some error
+        if global_set_inpos then
+            global_set_inpos(0)
+        end
         return nil, pos -- pos is now an error string!
     end
 

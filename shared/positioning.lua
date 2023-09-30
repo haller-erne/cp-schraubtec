@@ -21,6 +21,7 @@ local M = {
         height_to_top = 20,
         height_to_bottom = 20,
         offset = 0,                         -- tool head offset/length
+        angle = 0,                          -- no angle check
     }
 }
 local initialized = nil
@@ -94,17 +95,18 @@ end
 -- note, that this is limited to 64 chars
 function M.EncodePos(cur_x, cur_y, cur_z, pos_cfg, dirx, diry, dirz)
     -- total length = 25 (max range: +/-9999mm <~> +/-10m)
-    return string.format("%+06d%+06d%+06d%03d%03d%-04d%+04d%+04d%+04d",
+    return string.format("%+06d%+06d%+06d%03d%03d%-04d%+04d%+04d%+04d%03d",
         cur_x, cur_y, cur_z,    -- in mm
         pos_cfg.radius,         -- in mm
         pos_cfg.height,         -- in mm
 		pos_cfg.offset or 0,	-- in mm
-        dirx, diry, dirz)
+        dirx, diry, dirz,       -- degrees
+        pos_cfg.angle)          -- degrees
 end
 
 -- convert a database string int a position info lua object
 function M.DecodePos(ToolDefPos, id)
-   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 40 then
+   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 43 then
         -- nothing stored in the database
         local pos = {      				-- table with position info
             id = id,    				        -- position_id (is unique in the job context)
@@ -117,6 +119,7 @@ function M.DecodePos(ToolDefPos, id)
             radius = M.defaults.radius,                        -- tolerance radius
             height = M.defaults.height,                        -- tolerance height
             offset = M.defaults.offset,                         -- tool head offset/length
+            angle = M.defaults.angle,
         }
         return pos
     end
@@ -131,6 +134,7 @@ function M.DecodePos(ToolDefPos, id)
         dirx = tonumber(ToolDefPos:sub(29, 32)),
         diry = tonumber(ToolDefPos:sub(33, 36)),
         dirz = tonumber(ToolDefPos:sub(37, 40)),
+        angle = tonumber(ToolDefPos:sub(41, 43)),
     }
     return pos
 end
@@ -541,6 +545,11 @@ local function OnSidePanelMsg(name, cmd)
                 Pos = nil,                      -- M.pos_cur
                 user_level = UserManager.user_level,
                 admin_level = UserManager.admin_level,
+                editallowed = true,             -- TODO: only if teaching is active !!!
+                Delta = {
+                    posx = '', posy = '', posz = '',
+                    dirx = '', diry = '', dirz = '',
+                }
             }
             if type(chn.pos) == 'table' then
                 p.Pos = chn.pos
@@ -564,13 +573,15 @@ local function OnSidePanelMsg(name, cmd)
             return
         elseif o.cmd == 'set-params' then
             --M.pos_cfg.tolerance = o.params.Pos.tolerance
-            M.curtask.pos.radius    = o.params.Pos.radius
-            M.curtask.pos.height    = o.params.Pos.height
-            M.curtask.pos.offset    = o.params.Pos.offset
+            M.curtask.pos.radius    = tonumber(o.params.Pos.radius)
+            M.curtask.pos.height    = tonumber(o.params.Pos.height)
+            M.curtask.pos.offset    = tonumber(o.params.Pos.offset)
+            M.curtask.pos.angle     = tonumber(o.params.Pos.angle)
             -- update defaults
-            M.defaults.radius       = o.params.Pos.radius
-            M.defaults.height       = o.params.Pos.height
-            M.defaults.offset       = o.params.Pos.offset
+            M.defaults.radius       = tonumber(o.params.Pos.radius)
+            M.defaults.height       = tonumber(o.params.Pos.height)
+            M.defaults.offset       = tonumber(o.params.Pos.offset)
+            M.defaults.angle        = tonumber(o.params.Pos.angle)
             return
 
         elseif o.cmd == 'save-ref' then
