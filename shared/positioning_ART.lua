@@ -9,7 +9,7 @@ local M =
 M.Init = function(chn)
     -- global ART DLL init
     if M.dev == nil then
-        local ret = api.init()
+        local ret, err = api.init()
         if ret ~= true then
             XTRACE(1, "Failed to initialize the ART API!")
             -- error("Failed to initialize the ART API!")
@@ -21,7 +21,10 @@ M.Init = function(chn)
             -- SetLuaAlarm('ART', -2, 'AR-Tracking: station.ini section [POSITIONING_ART] missing!')
             error('INI-section: "POSITIONING_ART": section missing!')
         end
-        M.dev = api.open(tbl.IP, tbl.PORT)
+        M.dev, ret = api.open(tbl.IP, tbl.PORT)
+        if not M.dev then
+            error('Opening ART interface failed: '..ret)
+        end
     end
     chn.mod = {}
     local cfg = {}
@@ -56,7 +59,38 @@ end
 -- check, if the position is already available and update it eventually
 function M.SelectPos(chn, pos)
     local cfg = chn.mod.cfg
-    local ok, err = M.dev:add_position(pos)
+    -- convert position for ART
+    local artpos = {
+        id              = pos.id,
+        tolerance       = pos.tolerance,    -- tolerance kind (0=sphere, 1=cylinder, 2=frustum, 3=cylinder+frustrum)
+        posx            = pos.posx,
+        posy            = pos.posy,
+        posz            = pos.posz,
+        dirx            = pos.dirx,
+        diry            = pos.diry,
+        dirz            = pos.dirz,
+        offset          = pos.offset,       -- tool head offset/length
+        angle_tolerance = pos.angle,        -- angle check
+    }
+    if pos.tolerance == 0 then              -- sphere
+        artpos.radius           = pos.r1
+    elseif pos.tolerance == 1 then          -- cylinder
+        artpos.radius           = pos.r1
+        artpos.height_to_top    = pos.h1
+        artpos.height_to_bottom = pos.h2
+    elseif pos.tolerance == 2 then          -- frustum
+        artpos.radius_of_top    = pos.r1
+        artpos.radius_of_bottom = pos.r2
+        artpos.height_to_top    = pos.h1
+        artpos.height_to_bottom = pos.h2
+    elseif pos.tolerance == 3 then          -- frustum cylinder
+        artpos.radius_of_top    = pos.r1
+        artpos.radius_of_bottom = pos.r2
+        artpos.height_to_top    = pos.h1
+        artpos.height_to_bottom = pos.h2
+    end
+
+    local ok, err = M.dev:add_position(artpos)
     if ok ~= true then
         -- maybe overlapping positions?
         SetLuaAlarm('ART', -2, string.format('AR-Tracking: Tool %d: Cannot set position, err=%s!',
@@ -80,8 +114,8 @@ function M.StartTask(chn, JobName)
         --   	-- check the bolts and possibly update them
         --   	local art_poslist, err = M.dev:get_position_list()
 
-        -- NOTE: as we don't have the list of positions for the job, simply 
-        --       delete all positions from the ART interface and add them 
+        -- NOTE: as we don't have the list of positions for the job, simply
+        --       delete all positions from the ART interface and add them
         --       later step by step...
         M.dev:del_position_list()
 
@@ -122,6 +156,11 @@ M.GetCurrentToolPos = function(chn, expectedpos)
     -- int status, err = M.dev:get_status()
 
     local inpos, pos  = M.dev:find_position(chn.chn)
+    if pos ~= nil then
+        if pos.dirx then pos.dirx = 100 * pos.dirx end
+        if pos.diry then pos.diry = 100 * pos.diry end
+        if pos.dirz then pos.dirz = 100 * pos.dirz end
+    end
     if inpos ~= nil then
 		if inpos == 1 then
             if expectedpos ~= nil then  -- shall we check against a given position?

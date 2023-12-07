@@ -98,17 +98,27 @@ var RequestPosition = function(test)
 const alertGroup = document.querySelector('cds-alert-group');
 const alert = document.querySelector('cds-alert');
 var btnTol = [
-	{ btn: document.querySelector('#btnTol1'), file: 'cylinder.png' },
-	{ btn: document.querySelector('#btnTol2'), file: 'sphere.png' },
-	{ btn: document.querySelector('#btnTol3'), file: 'frustum.png' }
+	{ btn: document.querySelector('#btnTol1'), file: 'sphere.png' },
+	{ btn: document.querySelector('#btnTol2'), file: 'cylinder.png' },
+	{ btn: document.querySelector('#btnTol3'), file: 'frustum.png' },
+	{ btn: document.querySelector('#btnTol4'), file: 'fruscyl.png' }
 ];
 var btnTolSave = document.querySelector('#btnTolSave');
 var inpTol = [
 	{ inp: document.querySelector('#inpRadius') },
 	{ inp: document.querySelector('#inpHeight') },
+	{ inp: document.querySelector('#inpRadius2') },
+	{ inp: document.querySelector('#inpHeight2') },
 	{ inp: document.querySelector('#inpOffset') },
 	{ inp: document.querySelector('#inpAngle') },
-]
+];
+var inpVis = [
+	// r1,   h1,    r2,    h2,    offs,  angle
+	[  true, false, false, false,  true,  true ],	// sphere
+	[  true,  true,  true, false,  true,  true ],	// cylinder
+	[  true,  true,  true,  true,  true,  true ],	// frustum
+	[  true,  true,  true,  true,  true,  true ],	// frustum cylinder
+];
 const imgTol = document.querySelector('#imgTol');
 const btnRef = document.querySelector('#btnRef');
 var isAdmin = -1;
@@ -155,14 +165,18 @@ globalThis.UpdateParams = function(paramStr)
 	domParam.diry.value = param.Pos.diry;
 	domParam.dirz.value = param.Pos.dirz;
 
-	inpTol[0].inp.value = param.Pos.radius;
-	inpTol[1].inp.value = param.Pos.height;
-	inpTol[2].inp.value = param.Pos.offset;
-	inpTol[3].inp.value = param.Pos.angle;
-	inpTol[0].cfgval = param.Pos.radius;
-	inpTol[1].cfgval = param.Pos.height;
-	inpTol[2].cfgval = param.Pos.offset;
-	inpTol[3].cfgval = param.Pos.angle;
+	inpTol[0].inp.value = param.Pos.r1;
+	inpTol[1].inp.value = param.Pos.h1;
+	inpTol[2].inp.value = param.Pos.r2;
+	inpTol[3].inp.value = param.Pos.h2;
+	inpTol[4].inp.value = param.Pos.offset;
+	inpTol[5].inp.value = param.Pos.angle;
+	inpTol[0].cfgval = param.Pos.r1;
+	inpTol[1].cfgval = param.Pos.h1;
+	inpTol[2].cfgval = param.Pos.r2;
+	inpTol[3].cfgval = param.Pos.h2;
+	inpTol[4].cfgval = param.Pos.offset;
+	inpTol[5].cfgval = param.Pos.angle;
 
 	selectTol(e, param.Pos.tolerance)
 }
@@ -224,9 +238,13 @@ globalThis.UpdateUser = function(enableAdmin)
 	inpTol[1].inp.readOnly = !enableAdmin;
 	inpTol[2].inp.readOnly = !enableAdmin;
 	inpTol[3].inp.readOnly = !enableAdmin;
+	inpTol[4].inp.readOnly = !enableAdmin;
+	inpTol[5].inp.readOnly = !enableAdmin;
+
 	btnTol[0].btn.disabled = !enableAdmin;
 	btnTol[1].btn.disabled = !enableAdmin;
 	btnTol[2].btn.disabled = !enableAdmin;
+	btnTol[3].btn.disabled = !enableAdmin;
 	btnRef.disabled = !enableAdmin;
 }
 
@@ -245,8 +263,12 @@ var selectTol = function(e, idx) {	// click event
 	btnTol.forEach((item, i) => {
 		item.btn.action = (idx == i) ? "solid" : "outline";
 	});
+	inpTol.forEach((item, i) => {
+		item.inp.style.visibility = (inpVis[idx][i] == true) ? "visible" : "hidden";
+	});
 	imgTol.src = btnTol[idx].file;
 	btnTolSave.action = 'solid';
+	// update the visible/invisible state of the input fields
 	saveChanges();
 }
 btnTol[0].btn.addEventListener('click', (e) => selectTol(e, 0));

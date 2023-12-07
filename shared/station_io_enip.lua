@@ -1,6 +1,6 @@
 -- Generic low-level Ethernet-IP module
 -- To use, require this module and add OnConnChanged and OnDataChanged functions
--- 
+--
 -- List all Ethernet/IP devices in station.ini!
 --
 local enip = require("luaenip")     -- load our LuaENIP.dll Ethernet/IP scanner library
@@ -55,6 +55,59 @@ ethernet_devices.TURCK_AL1324 = {
                             3, 0, 1, 0, 0x00, 0x00, 0, 0, 0, 0, 0, 1,
                             3, 0, 1, 0, 0x00, 0x00, 0, 0, 0, 0, 0, 1,
 						},
+    ---------------------------------------------------------------------------
+	-- Startup parameter writes (optional) - only as workaround for (buggy) Rexroth devices
+	-- Parameters are given as a sequence of bytes for writing using SetAttributeSingle.
+	-- For each Par_Count elements, the following data must be provided:
+	-- 		[byte]	Class
+	--		[byte]	Instance
+	--		[byte]	Attr
+	--		[byte]	Number of data bytes to write
+	--		[bytes] [actual data bytes to write]
+	--
+	Par_Data            = {},  -- parameter data in the above format
+    ---------------------------------------------------------------------------
+	-- common parameters
+	Rate                = 50,			-- data rate in [ms]
+	Keying              = {},        	-- Electronic key segment
+}
+-------------------------------------------------------------------------------
+--          ROCKWELL ArmorBlock 1732E 16-port I/O block
+------------------------------------------------------------------------------
+ethernet_devices.Rockwell_1732E = {
+    -- Connection path: 20 04 24 C7 2C 97 2C 66
+    --                           --                 Configuration assembly instance (0xC7 = 199)
+    --                                 --           O -> T assembly instance (0x97 = 151)
+    --                                       --     T -> O assembly instance (0x66 = 102)
+	-- O->T parameters: PLC --> Device, "PLC Outputs"
+    ---------------------------------------------------------------------------
+    -- Scanner to Target:
+	--ConnectionMode    OT_Mode;		-- Connection mode: default POINT2POINT
+	OT_Inst             = 0x23,			-- O->T Instance ID
+	OT_Size             = 2,			-- O->T data size (in bytes)
+	--RealTimeFormat    OT_RTFormat;   	-- O->T Header/Heartbeat/Modeless/Zerolen
+	--Priority		    OT_Priority;
+	OT_ExclusiveOwner   = true,         -- true = exclusive owner
+	OT_VariableLength   = false,        -- true = variable length allowed
+    ---------------------------------------------------------------------------
+    -- Target to Scanner:
+	-- T->O parameters: Device -> PLC, "PLC Inputs"
+	TO_Mode             = 2,			-- connection mode: default MULTICAST, 0=NULL, 1=Multicast, 2=Point2Point
+	TO_Inst             = 0x05,			-- T->O Instance ID
+	TO_Size             = 2,			-- T->O data size (in bytes)
+	--RealTimeFormat	TO_RTFormat;    -- T->O Header/Heartbeat/Modeless/Zerolen
+	--Priority		TO_Priority;
+	TO_ExclusiveOwner   = true,         -- true = exclusive owner
+	TO_VariableLength   = false,        -- true = variable length allowed
+    ---------------------------------------------------------------------------
+	-- Configuration Assembly (optional)
+	Cfg_Inst            = 0x66, --0x24,        	-- 0 = unused
+	Cfg_Data            = { },--[[            -- 6 bytes of config data
+							0, 0,       -- UINT Filter input off-to-on
+							0, 0,       -- UINT Filter input on-to-off
+                            0,          -- BYTE Flags
+                            0,          -- USINT reserved
+						},]]
     ---------------------------------------------------------------------------
 	-- Startup parameter writes (optional) - only as workaround for (buggy) Rexroth devices
 	-- Parameters are given as a sequence of bytes for writing using SetAttributeSingle.
@@ -236,6 +289,10 @@ local function Poll()
             end
          end
     end
+end
+
+M.UpdateOutputs = function()
+    Poll()
 end
 
 -------------------------------------------------------------------------------

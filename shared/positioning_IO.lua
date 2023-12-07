@@ -150,7 +150,7 @@ M.UpdatePos_RotIncLenAbs = function(chn, rotation_inc, distance_abs, tilt_x, til
     }
     if chn.pos ~= pos then
         if cfg.DEBUG > 0 then
-            XTRACE(16, string.format("Pos: l/r: %.2fmm/%.2f° x/y: %.2f/%.2f -> %.2f/%.2f", 
+            XTRACE(16, string.format("Pos: l/r: %.2fmm/%.2f° x/y: %.2f/%.2f -> %.2f/%.2f",
                 len_mm, rad*360/(2*3.1415), x, y, x_abs, y_abs))
         end
         chn.pos = pos
@@ -204,7 +204,7 @@ M.UpdatePos_RotIncLenInc = function(chn, rotation_inc, distance_inc, tilt_x, til
         dirz = tilt_z,
     }
     if chn.pos ~= pos then
-        XTRACE(16, string.format("Pos: l/r: %.2fmm/%.2f° x/y: %.2f/%.2f -> %.2f/%.2f", 
+        XTRACE(16, string.format("Pos: l/r: %.2fmm/%.2f° x/y: %.2f/%.2f -> %.2f/%.2f",
             len_mm, rad*360/(2*3.1415), x, y, x_abs, y_abs))
         chn.pos = pos
     end

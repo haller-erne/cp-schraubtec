@@ -19,7 +19,6 @@ Station 1 (PTS): 192.168.1.20 – 192.168.1.39
 -	192.168.1.34-38: Reserve
 -	192.168.1.39: Access-Point für WLan-Teilnehmer der Station
 
-
 Station 2 (GWK): 192.168.1.40 – 192.168.1.59
 -	192.168.1.40: OGS-PC
 -	192.168.1.41: Nexo
@@ -40,6 +39,16 @@ Station 3 (JH): 192.168.1.60 – 192.168.1.79
 -	192.168.1.71: JH Handyflex (IO-Link Master)
 -	192.168.1.72-38: Reserve
 -	192.168.1.79: Access-Point für WLan-Teilnehmer der Station
+
+Station 4 (ART): 192.168.1.80 – 192.168.1.99
+-	192.168.1.80: OGS-PC
+-	192.168.1.81: Reserve
+-	192.168.1.82: Nexo
+-	192.168.1.83: GWK Operator 22
+-	192.168.1.84-89: Reserve
+-	192.168.1.90: ART SmartTrack
+-	192.168.1.91-98: Reserve
+-	192.168.1.99: Access-Point für WLan-Teilnehmer der Station
 
 Gemeinsame Infrastruktur (PC für ActiveCockpit): 192.168.1.100 – 192.168.1.253
 -	192.168.1.100: Zentraler PC (ActiveCockpit)

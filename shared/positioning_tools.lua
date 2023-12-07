@@ -56,8 +56,8 @@ M.calc_distance_sphere = function(curpos, exppos)
 	local dif_z = curpos.posz - exppos.posz
 
     -- check, if the current position is within our cylinder
-    local distxyz = (dif_x*dif_x) + (dif_y*dif_y) + (dif_Z*dif_z)
-    local inpos = (distxyz <= (exppos.radius*exppos.radius))
+    local distxyz = (dif_x*dif_x) + (dif_y*dif_y) + (dif_z*dif_z)
+    local inpos = (distxyz <= (exppos.r1*exppos.r1))
     -- currently, we don't care about the Z position!
 
     -- for a sphere, there is no need to check the angle
@@ -80,7 +80,7 @@ M.calc_distance_cylinder = function(curpos, exppos)
     -- check, if the current position is within our cylinder
     local distxy = (dif_x*dif_x) + (dif_y*dif_y)
     -- currently, we don't care about the Z position!
-    local inpos_xyz = (distxy <= (exppos.radius*exppos.radius))
+    local inpos_xyz = (distxy <= (exppos.r1*exppos.r1))
     -- check the angle distance
     local inpos_rad = true
     if exppos.angle and exppos.angle > 0 then

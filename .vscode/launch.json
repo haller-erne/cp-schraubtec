@@ -24,6 +24,25 @@
             //"verbose": true
         },
         {
+            "name": "heOGS (he-tarantool)",
+            "type": "lua-tarantool",
+            "request": "launch",
+            "program": {
+              "tarantool": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/monitor.exe",
+              "communication": "stdio"
+            },
+            "args": [
+            ],
+            "scriptRoots": [
+                //"D:/Entwicklung/sw/heOGS/config/projects/Bosch Horb/Montage/ST130",
+                "D:/Sandboxes/ogs/ogs-trunk/bin/debug",
+                "D:/Sandboxes/ogs/ogs-trunk/bin/debug/lualibs",
+            ],
+            "stopOnEntry": true,
+            "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
+            "verbose": true
+        },
+        {
             "name": "heOGS (he)",
             "type": "lua-local",
             "request": "launch",
@@ -40,7 +59,7 @@
             ],
             "stopOnEntry": true,
             "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
-            //"verbose": true
+            "verbose": true
         },
                {
             "name": "heOGS (ic)",

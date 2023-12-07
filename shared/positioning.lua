@@ -14,12 +14,10 @@ local M = {
         posx = 10, posy = 10, posz = 10,    -- (float) location
         dirx = 0, diry = 0, dirz = 0,
         tolerance = 0,                      -- tolerance kind (0=sphere, 1=cylinder, 2=frustum, 3=cylinder+frustrum)
-        radius = 20,                        -- tolerance radius
-        height = 20,                        -- tolerance height
-        radius_of_top = 20,
-        radius_of_bottom = 20,
-        height_to_top = 20,
-        height_to_bottom = 20,
+        r1 = 20,                            -- primary tolerance radius
+        h1 = 20,                            -- primary tolerance height
+        r2 = 20,                            -- secondary tolerance radius
+        h2 = 20,                            -- secondary tolerance height
         offset = 0,                         -- tool head offset/length
         angle = 0,                          -- no angle check
     }
@@ -30,6 +28,7 @@ local tools = require('positioning_tools')
 local json = require('cjson')
 
 local drivers = {
+    -- TODO: add position encoding, defaults, ... to driver
     ART = require('positioning_ART'),
     IO = require('positioning_IO')
 }
@@ -95,10 +94,13 @@ end
 -- note, that this is limited to 64 chars
 function M.EncodePos(cur_x, cur_y, cur_z, pos_cfg, dirx, diry, dirz)
     -- total length = 25 (max range: +/-9999mm <~> +/-10m)
-    return string.format("%+06d%+06d%+06d%03d%03d%-04d%+04d%+04d%+04d%03d",
+    return string.format("%01d%+06d%+06d%+06d%03d%03d%03d%03d%-04d%+04d%+04d%+04d%03d",
+        pos_cfg.tolerance,      -- type of tolerance
         cur_x, cur_y, cur_z,    -- in mm
-        pos_cfg.radius,         -- in mm
-        pos_cfg.height,         -- in mm
+        pos_cfg.r1,        -- in mm
+        pos_cfg.h1,        -- in mm
+        pos_cfg.r2,        -- in mm
+        pos_cfg.h2,        -- in mm
 		pos_cfg.offset or 0,	-- in mm
         dirx, diry, dirz,       -- degrees
         pos_cfg.angle)          -- degrees
@@ -106,35 +108,41 @@ end
 
 -- convert a database string int a position info lua object
 function M.DecodePos(ToolDefPos, id)
-   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 43 then
+   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 50 then
         -- nothing stored in the database
         local pos = {      				-- table with position info
             id = id,    				        -- position_id (is unique in the job context)
+            tolerance = M.defaults.tolerance,
             posx = M.defaults.posx,
             posy = M.defaults.posy,
             posz = M.defaults.posz,            -- (float) location
             dirx = M.defaults.dirx,
             diry = M.defaults.diry,
             dirz = M.defaults.dirz,
-            radius = M.defaults.radius,                        -- tolerance radius
-            height = M.defaults.height,                        -- tolerance height
-            offset = M.defaults.offset,                         -- tool head offset/length
+            r1 = M.defaults.r1,
+            h1 = M.defaults.h1,
+            r2 = M.defaults.r2,
+            h2 = M.defaults.h2,
+            offset = M.defaults.offset,        -- tool head offset/length
             angle = M.defaults.angle,
         }
         return pos
     end
     local pos = {
         id = id,
-        posx = tonumber(ToolDefPos:sub( 1,  6)),
-        posy = tonumber(ToolDefPos:sub( 7, 12)),
-        posz = tonumber(ToolDefPos:sub(13, 18)),
-        radius = tonumber(ToolDefPos:sub(19, 21)),      -- tolerance radius
-        height = tonumber(ToolDefPos:sub(22, 24)),      -- tolerance height
-        offset = tonumber(ToolDefPos:sub(25, 28)),      -- tool head offset/length
-        dirx = tonumber(ToolDefPos:sub(29, 32)),
-        diry = tonumber(ToolDefPos:sub(33, 36)),
-        dirz = tonumber(ToolDefPos:sub(37, 40)),
-        angle = tonumber(ToolDefPos:sub(41, 43)),
+        tolerance = tonumber(ToolDefPos:sub( 1,  1)),
+        posx = tonumber(ToolDefPos:sub( 2,  7)),
+        posy = tonumber(ToolDefPos:sub( 8, 13)),
+        posz = tonumber(ToolDefPos:sub(14, 19)),
+        r1 = tonumber(ToolDefPos:sub(20, 22)),
+        h1 = tonumber(ToolDefPos:sub(23, 25)),
+        r2 = tonumber(ToolDefPos:sub(26, 28)),
+        h2 = tonumber(ToolDefPos:sub(29, 31)),
+        offset = tonumber(ToolDefPos:sub(32, 35)),      -- tool head offset/length
+        dirx = tonumber(ToolDefPos:sub(36, 39)),
+        diry = tonumber(ToolDefPos:sub(40, 43)),
+        dirz = tonumber(ToolDefPos:sub(44, 47)),
+        angle = tonumber(ToolDefPos:sub(48, 50)),
     }
     return pos
 end
@@ -572,14 +580,19 @@ local function OnSidePanelMsg(name, cmd)
             Browser.ExecJS_async(name, "UpdateParams('"..par.."');")
             return
         elseif o.cmd == 'set-params' then
-            --M.pos_cfg.tolerance = o.params.Pos.tolerance
-            M.curtask.pos.radius    = tonumber(o.params.Pos.radius)
-            M.curtask.pos.height    = tonumber(o.params.Pos.height)
+            M.curtask.pos.tolerance = tonumber(o.params.Pos.tolerance)
+            M.curtask.pos.r1        = tonumber(o.params.Pos.r1)
+            M.curtask.pos.h1        = tonumber(o.params.Pos.h1)
+            M.curtask.pos.r2        = tonumber(o.params.Pos.r2)
+            M.curtask.pos.h2        = tonumber(o.params.Pos.h2)
             M.curtask.pos.offset    = tonumber(o.params.Pos.offset)
             M.curtask.pos.angle     = tonumber(o.params.Pos.angle)
             -- update defaults
-            M.defaults.radius       = tonumber(o.params.Pos.radius)
-            M.defaults.height       = tonumber(o.params.Pos.height)
+            M.defaults.tolerance    = tonumber(o.params.Pos.tolerance)
+            M.defaults.r1           = tonumber(o.params.Pos.r1)
+            M.defaults.h1           = tonumber(o.params.Pos.h1)
+            M.defaults.r2           = tonumber(o.params.Pos.r2)
+            M.defaults.h2           = tonumber(o.params.Pos.h2)
             M.defaults.offset       = tonumber(o.params.Pos.offset)
             M.defaults.angle        = tonumber(o.params.Pos.angle)
             return
