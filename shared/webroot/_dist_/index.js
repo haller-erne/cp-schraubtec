@@ -98,10 +98,10 @@ var RequestPosition = function(test)
 const alertGroup = document.querySelector('cds-alert-group');
 const alert = document.querySelector('cds-alert');
 var btnTol = [
-	{ btn: document.querySelector('#btnTol1'), file: 'sphere.png' },
-	{ btn: document.querySelector('#btnTol2'), file: 'cylinder.png' },
-	{ btn: document.querySelector('#btnTol3'), file: 'frustum.png' },
-	{ btn: document.querySelector('#btnTol4'), file: 'fruscyl.png' }
+	{ btn: document.querySelector('#btnTol1'), file: 'positioning_sphere.png' },
+	{ btn: document.querySelector('#btnTol2'), file: 'positioning_cylinder.png' },
+	{ btn: document.querySelector('#btnTol3'), file: 'positioning_frustum.png' },
+	{ btn: document.querySelector('#btnTol4'), file: 'positioning_fruscyl.png' }
 ];
 var btnTolSave = document.querySelector('#btnTolSave');
 var inpTol = [
@@ -150,37 +150,11 @@ var domPos = {
 	state : document.querySelector('#txtStatus'),
 };
 
-// Called as a response to OGS.SendCmd('{ "cmd":"get-params" }')
-// update the DOM accordingly
-globalThis.UpdateParams = function(paramStr)
+function fmt(fVal)
 {
-	let param = JSON.parse(paramStr);
-	domParam.job.value = param.Job;
-	domParam.task.value = param.Task;
-	// param.Tool;
-	domParam.posx.value = param.Pos.posx;
-	domParam.posy.value = param.Pos.posy;
-	domParam.posz.value = param.Pos.posz;
-	domParam.dirx.value = param.Pos.dirx;
-	domParam.diry.value = param.Pos.diry;
-	domParam.dirz.value = param.Pos.dirz;
-
-	inpTol[0].inp.value = param.Pos.r1;
-	inpTol[1].inp.value = param.Pos.h1;
-	inpTol[2].inp.value = param.Pos.r2;
-	inpTol[3].inp.value = param.Pos.h2;
-	inpTol[4].inp.value = param.Pos.offset;
-	inpTol[5].inp.value = param.Pos.angle;
-	inpTol[0].cfgval = param.Pos.r1;
-	inpTol[1].cfgval = param.Pos.h1;
-	inpTol[2].cfgval = param.Pos.r2;
-	inpTol[3].cfgval = param.Pos.h2;
-	inpTol[4].cfgval = param.Pos.offset;
-	inpTol[5].cfgval = param.Pos.angle;
-
-	selectTol(e, param.Pos.tolerance)
+	if (fVal == '') return '';
+	return Math.round(fVal);	// Math.round(fVal*10)/10;
 }
-
 // Called as a response to OGS.SendCmd('{ "cmd":"get-position" }')
 // update the DOM accordingly
 globalThis.UpdatePosition = function(posStr)
@@ -197,18 +171,18 @@ globalThis.UpdatePosition = function(posStr)
 	if (pos.State == 0) {
 		domPos.state.value = "OK";
 		domPos.inpos.value = (pos.InPos == true) ? 'Ja' : 'Nein';
-		domPos.posx.value = pos.Pos.posx;
-		domPos.posy.value = pos.Pos.posy;
-		domPos.posz.value = pos.Pos.posz;
-		domPos.dirx.value = pos.Pos.dirx;
-		domPos.diry.value = pos.Pos.diry;
-		domPos.dirz.value = pos.Pos.dirz;
-		domPos.dPosx.value = pos.Delta.posx;
-		domPos.dPosy.value = pos.Delta.posy;
-		domPos.dPosz.value = pos.Delta.posz;
-		domPos.dDirx.value = pos.Delta.dirx;
-		domPos.dDiry.value = pos.Delta.diry;
-		domPos.dDirz.value = pos.Delta.dirz;
+		domPos.posx.value = fmt(pos.Pos.posx);
+		domPos.posy.value = fmt(pos.Pos.posy);
+		domPos.posz.value = fmt(pos.Pos.posz);
+		domPos.dirx.value = fmt(pos.Pos.dirx);
+		domPos.diry.value = fmt(pos.Pos.diry);
+		domPos.dirz.value = fmt(pos.Pos.dirz);
+		domPos.dPosx.value = fmt(pos.Delta.posx);
+		domPos.dPosy.value = fmt(pos.Delta.posy);
+		domPos.dPosz.value = fmt(pos.Delta.posz);
+		domPos.dDirx.value = fmt(pos.Delta.dirx);
+		domPos.dDiry.value = fmt(pos.Delta.diry);
+		domPos.dDirz.value = fmt(pos.Delta.dirz);
 	} else {
 		domPos.state.value = pos.Error;
 		domPos.inpos.value = '';
@@ -274,6 +248,7 @@ var selectTol = function(e, idx) {	// click event
 btnTol[0].btn.addEventListener('click', (e) => selectTol(e, 0));
 btnTol[1].btn.addEventListener('click', (e) => selectTol(e, 1));
 btnTol[2].btn.addEventListener('click', (e) => selectTol(e, 2));
+btnTol[3].btn.addEventListener('click', (e) => selectTol(e, 3));
 
 var referenceTol = function(e) {	// click event
 	saveReference();
@@ -297,6 +272,8 @@ inpTol[0].inp.addEventListener('blur', (e) => inputTol(e, 0));
 inpTol[1].inp.addEventListener('blur', (e) => inputTol(e, 1));
 inpTol[2].inp.addEventListener('blur', (e) => inputTol(e, 2));
 inpTol[3].inp.addEventListener('blur', (e) => inputTol(e, 3));
+inpTol[4].inp.addEventListener('blur', (e) => inputTol(e, 4));
+inpTol[5].inp.addEventListener('blur', (e) => inputTol(e, 5));
 
 var saveChanges = function(e) {
 	var tolerance = 0;
@@ -313,10 +290,12 @@ var saveChanges = function(e) {
 			Task: domParam.task.value,
 			Pos: {
 				tolerance: tolerance,
-				radius: inpTol[0].inp.value,
-				height: inpTol[1].inp.value,
-				offset: inpTol[2].inp.value,
-				angle: inpTol[3].inp.value,
+				r1: inpTol[0].inp.value,
+				h1: inpTol[1].inp.value,
+				r2: inpTol[2].inp.value,
+				h2: inpTol[3].inp.value,
+				offset: inpTol[4].inp.value,
+				angle: inpTol[5].inp.value,
 				//domParam.posx.value
 				//domParam.posy.value
 				//domParam.posz.value
@@ -350,8 +329,6 @@ var saveReference = function(e) {
 }
 
 
-
-
 var data = {
     'radio': false,
     'light': false,
@@ -369,6 +346,46 @@ globalThis.UpdateState = function(light, fan, agv) {
 		setButton(light_on, light_off, InputState.light, light);
 	}
 };
+
+
+// Called as a response to OGS.SendCmd('{ "cmd":"get-params" }')
+// update the DOM accordingly
+globalThis.UpdateParams = function(paramStr)
+{
+	let param = JSON.parse(paramStr);
+	domParam.job.value = param.Job;
+	domParam.task.value = param.Task;
+	// param.Tool;
+	domParam.posx.value = param.Pos.posx;
+	domParam.posy.value = param.Pos.posy;
+	domParam.posz.value = param.Pos.posz;
+	domParam.dirx.value = param.Pos.dirx;
+	domParam.diry.value = param.Pos.diry;
+	domParam.dirz.value = param.Pos.dirz;
+
+	inpTol[0].inp.value = param.Pos.r1;
+	inpTol[1].inp.value = param.Pos.h1;
+	inpTol[2].inp.value = param.Pos.r2;
+	inpTol[3].inp.value = param.Pos.h2;
+	inpTol[4].inp.value = param.Pos.offset;
+	inpTol[5].inp.value = param.Pos.angle;
+	inpTol[0].cfgval = param.Pos.r1;
+	inpTol[1].cfgval = param.Pos.h1;
+	inpTol[2].cfgval = param.Pos.r2;
+	inpTol[3].cfgval = param.Pos.h2;
+	inpTol[4].cfgval = param.Pos.offset;
+	inpTol[5].cfgval = param.Pos.angle;
+
+	//selectTol(e, param.Pos.tolerance)
+	btnTol.forEach((item, i) => {
+		item.btn.action = (param.Pos.tolerance == i) ? "solid" : "outline";
+	});
+	inpTol.forEach((item, i) => {
+		item.inp.style.visibility = (inpVis[param.Pos.tolerance][i] == true) ? "visible" : "hidden";
+	});
+	imgTol.src = btnTol[param.Pos.tolerance].file;
+	btnTolSave.action = 'solid';
+}
 
 var InputState = {
 	light: {

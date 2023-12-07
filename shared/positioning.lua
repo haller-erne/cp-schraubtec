@@ -562,6 +562,14 @@ local function OnSidePanelMsg(name, cmd)
             if type(chn.pos) == 'table' then
                 p.Pos = chn.pos
                 p.Error = nil
+                p.Delta.posx = p.Pos.posx - M.curtask.pos.posx
+                p.Delta.posy = p.Pos.posy - M.curtask.pos.posy
+                p.Delta.posz = p.Pos.posz - M.curtask.pos.posz
+                if M.curtask.pos.angle ~= 0 then
+                    p.Delta.dirx = p.Pos.dirx - M.curtask.pos.dirx
+                    p.Delta.diry = p.Pos.diry - M.curtask.pos.diry
+                    p.Delta.dirz = p.Pos.dirz - M.curtask.pos.dirz
+                end
             else
                 p.State = -1                    -- Positioning not running
                 p.Error = chn.err or 'no data'  -- Positioning error message
