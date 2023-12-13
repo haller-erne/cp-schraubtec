@@ -115,7 +115,7 @@ var inpTol = [
 var inpVis = [
 	// r1,   h1,    r2,    h2,    offs,  angle
 	[  true, false, false, false,  true,  true ],	// sphere
-	[  true,  true,  true, false,  true,  true ],	// cylinder
+	[  true,  true, false,  true,  true,  true ],	// cylinder
 	[  true,  true,  true,  true,  true,  true ],	// frustum
 	[  true,  true,  true,  true,  true,  true ],	// frustum cylinder
 ];
@@ -147,6 +147,8 @@ var domPos = {
 	dDiry : document.querySelector('#txtDeltaRadY'),
 	dDirz : document.querySelector('#txtDeltaRadZ'),
 	inpos : document.querySelector('#txtInPos'),
+	inposa : document.querySelector('#txtInPosA'),
+	inposp : document.querySelector('#txtInPosP'),
 	state : document.querySelector('#txtStatus'),
 };
 
@@ -171,6 +173,7 @@ globalThis.UpdatePosition = function(posStr)
 	if (pos.State == 0) {
 		domPos.state.value = "OK";
 		domPos.inpos.value = (pos.InPos == true) ? 'Ja' : 'Nein';
+		domPos.inpos.style.backgroundColor 	= (pos.InPos == true) ? "green" : "red";
 		domPos.posx.value = fmt(pos.Pos.posx);
 		domPos.posy.value = fmt(pos.Pos.posy);
 		domPos.posz.value = fmt(pos.Pos.posz);
@@ -183,9 +186,14 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dDirx.value = fmt(pos.Delta.dirx);
 		domPos.dDiry.value = fmt(pos.Delta.diry);
 		domPos.dDirz.value = fmt(pos.Delta.dirz);
+		domPos.inposp.style.visibility 		= (pos.Pos.in_location != null) ? "visible" : "hidden";
+		domPos.inposp.style.backgroundColor = (pos.Pos.in_location == 1) ? "green" : "red";
+		domPos.inposa.style.visibility 		= (pos.Pos.in_angle != null) ? "visible" : "hidden";
+		domPos.inposa.style.backgroundColor = (pos.Pos.in_angle == 1) ? "green" : "red";
 	} else {
 		domPos.state.value = pos.Error;
 		domPos.inpos.value = '';
+		domPos.inpos.style.backgroundColor 	= "";
 		domPos.posx.value = '';
 		domPos.posy.value = '';
 		domPos.posz.value = '';
@@ -198,6 +206,8 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dDirx.value = '';
 		domPos.dDiry.value = '';
 		domPos.dDirz.value = '';
+		domPos.inposp.style.visibility 		= "hidden";
+		domPos.inposa.style.visibility 		= "hidden";
 	}		
 	// Schedule the next update, if the window is still visible
 	if (OGS.UpdateTimer != null) {
@@ -375,6 +385,8 @@ globalThis.UpdateParams = function(paramStr)
 	inpTol[3].cfgval = param.Pos.h2;
 	inpTol[4].cfgval = param.Pos.offset;
 	inpTol[5].cfgval = param.Pos.angle;
+
+	btnRef.style.visibility = (param.Driver == 'ART') ? "hidden" : "visible";
 
 	//selectTol(e, param.Pos.tolerance)
 	btnTol.forEach((item, i) => {

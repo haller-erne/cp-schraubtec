@@ -19,10 +19,12 @@ M.Init = function(chn)
         local tbl = ReadIniSection('POSITIONING_ART')
         if type(tbl) ~= 'table' then
             -- SetLuaAlarm('ART', -2, 'AR-Tracking: station.ini section [POSITIONING_ART] missing!')
+            SetLuaAlarm('ART', -2, 'AR-Tracking: section [POSITIONING-ART] missing in station.ini!')
             error('INI-section: "POSITIONING_ART": section missing!')
         end
         M.dev, ret = api.open(tbl.IP, tbl.PORT)
         if not M.dev then
+            SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to open the API, error: %s!', tostring(ret)))
             error('Opening ART interface failed: '..ret)
         end
     end
@@ -32,6 +34,7 @@ M.Init = function(chn)
     if api._API_VERSION ~= nil and api._API_VERSION >= 0x000200 then
         local ok, err = M.dev:add_tool(chn.chn, chn.cfg.TARGET, "Tool "..tostring(chn.chn))
         if not ok then
+            SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to initialize, err: %s!', tostring(err)))
             error(string.format('ERROR: ART add tool failed: %s', err))
         end
     end

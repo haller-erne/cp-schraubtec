@@ -5,6 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "heOGS (he)",
+            "type": "lua-local",
+            "request": "launch",
+            "program": {
+              "command": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/monitor.exe",
+              "communication": "stdio"
+            },
+            "args": [
+            ],
+            "scriptRoots": [
+                "D:/Sandboxes/ogs/ogs-trunk/bin/debug",
+                "D:/Sandboxes/ogs/ogs-trunk/bin/debug/lualibs",
+            ],
+            "stopOnEntry": true,
+            "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
+            "integratedTerminal": true
+        },
+        {
             "name": "heOGS (local lua debugger)",
             "type": "lua-local",
             "request": "launch",
@@ -43,25 +61,6 @@
             "verbose": true
         },
         {
-            "name": "heOGS (he)",
-            "type": "lua-local",
-            "request": "launch",
-            "program": {
-              "command": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/monitor.exe",
-              "communication": "stdio"
-            },
-            "args": [
-            ],
-            "scriptRoots": [
-                //"D:/Entwicklung/sw/heOGS/config/projects/Bosch Horb/Montage/ST130",
-                "D:/Sandboxes/ogs/ogs-trunk/bin/debug",
-                "D:/Sandboxes/ogs/ogs-trunk/bin/debug/lualibs",
-            ],
-            "stopOnEntry": true,
-            "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
-            "verbose": true
-        },
-               {
             "name": "heOGS (ic)",
             "type": "lua-local",
             "request": "launch",

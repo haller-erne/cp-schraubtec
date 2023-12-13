@@ -582,7 +582,9 @@ local function OnSidePanelMsg(name, cmd)
                 Job = M.curtask.job,
                 Task = M.curtask.task,
                 Tool = M.curtask.Tool,            -- TODO: tool name?
-                Pos = M.curtask.pos
+                Pos = M.curtask.pos,
+                Driver = chn.cfg.DRIVER,
+                Ini = chn.cfg,
             }
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdateParams('"..par.."');")
@@ -607,10 +609,9 @@ local function OnSidePanelMsg(name, cmd)
 
         elseif o.cmd == 'save-ref' then
             if type(chn.pos) == 'table' then
-                -- TDOD: fix this!
-                M.cfg.offs_len = chn.pos.len
-                M.cfg.offs_rad = chn.pos.rad
-                M.save_reference(M.cfg.offs_len, M.cfg.offs_rad)
+                M.curtask.pos.offs_len = chn.pos.len
+                M.curtask.pos.offs_rad = chn.pos.rad
+                M.save_reference(M.curtask.pos.offs_len, M.curtask.pos.offs_rad)
             end
             return
 
