@@ -9,6 +9,7 @@ local M = {
         task = '',
         pos = nil,      -- the database configured position (if any)
     },
+    delta = {},
     key = nil,          -- if nil, then no position enabled task, else <Part+Job+Task>
     defaults = {
         posx = 10, posy = 10, posz = 10,    -- (float) location
@@ -458,10 +459,13 @@ function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, Task
         return 'No diff!'
     end
     M.InPos = inpos
+    M.delta.dif_x   = dif_x
+    M.delta.dif_y   = dif_y
+    M.delta.dif_z   = dif_z
     if inpos == true or inpos == 1 then
         return true, "Ok"       -- in position
     else
-        local diff = string.format("%+d/%+d/%+d", dif_x, dif_y, dif_z)
+        local diff = string.format("%+.0f/%+.0f/%+.0f", dif_x, dif_y, dif_z)
         return false, diff       -- true if in position!
     end
 end
@@ -506,7 +510,10 @@ function PS_TeachToolPosition(State, Tool, JobName, BoltName, PosCtrl, ToolPosDe
         return 'No diff!'
     end
     M.InPos = inpos
-    local DisplayMsg = string.format("%+d/%+d/%+d", dif_x,dif_y,dif_z)
+    M.delta.dif_x   = dif_x
+    M.delta.dif_y   = dif_y
+    M.delta.dif_z   = dif_z
+    local DisplayMsg = string.format("%+.0f/%+.0f/%+.0f", dif_x,dif_y,dif_z)
     return new_state, dif_z,dif_y,dif_x, newToolPosDef, DisplayMsg
 
 end
@@ -558,15 +565,15 @@ local function OnSidePanelMsg(name, cmd)
                 Delta = {
                     posx = '', posy = '', posz = '',
                     dir = '',
-                    dirx = '', diry = '', dirz = '', 
+                    dirx = '', diry = '', dirz = '',
                 }
             }
             if type(chn.pos) == 'table' then
                 p.Pos = chn.pos
                 p.Error = nil
-                p.Delta.posx = p.Pos.posx - M.curtask.pos.posx
-                p.Delta.posy = p.Pos.posy - M.curtask.pos.posy
-                p.Delta.posz = p.Pos.posz - M.curtask.pos.posz
+                p.Delta.posx = M.delta.dif_x    --p.Pos.posx - M.curtask.pos.posx
+                p.Delta.posy = M.delta.dif_y    --p.Pos.posy - M.curtask.pos.posy
+                p.Delta.posz = M.delta.dif_z    --p.Pos.posz - M.curtask.pos.posz
                 if M.curtask.pos.angle ~= 0 then
                     p.Delta.dirx = p.Pos.dirx - M.curtask.pos.dirx
                     p.Delta.diry = p.Pos.diry - M.curtask.pos.diry
@@ -633,6 +640,5 @@ local function OnSidePanelMsg(name, cmd)
 ]]--
 end
 Browser.RegMsgHandler('SidePanel', OnSidePanelMsg, Positioning_SidePlanel_Url)
-
 
 return M
