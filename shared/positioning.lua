@@ -26,6 +26,7 @@ local initialized = nil
 
 local tools = require('positioning_tools')
 local json = require('cjson')
+local math = require('math')
 
 local drivers = {
     -- TODO: add position encoding, defaults, ... to driver
@@ -556,7 +557,8 @@ local function OnSidePanelMsg(name, cmd)
                 editallowed = true,             -- TODO: only if teaching is active !!!
                 Delta = {
                     posx = '', posy = '', posz = '',
-                    dirx = '', diry = '', dirz = '',
+                    dir = '',
+                    dirx = '', diry = '', dirz = '', 
                 }
             }
             if type(chn.pos) == 'table' then
@@ -569,6 +571,11 @@ local function OnSidePanelMsg(name, cmd)
                     p.Delta.dirx = p.Pos.dirx - M.curtask.pos.dirx
                     p.Delta.diry = p.Pos.diry - M.curtask.pos.diry
                     p.Delta.dirz = p.Pos.dirz - M.curtask.pos.dirz
+                    -- Winkelabweichung zwischen den zwei Einheitsvektoren berechnen
+                    local rad = math.acos(p.Pos.dirx/100 * M.curtask.pos.dirx/100
+                                            + p.Pos.diry/100 * M.curtask.pos.diry/100
+                                            + p.Pos.dirz/100 * M.curtask.pos.dirz/100)
+                    p.Delta.dir = 180 * (rad / math.pi)
                 end
             else
                 p.State = -1                    -- Positioning not running

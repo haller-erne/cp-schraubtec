@@ -126,6 +126,8 @@ var isAdmin = -1;
 var domParam = {
 	job: document.querySelector('#inpWorkspace'),
 	task: document.querySelector('#inpPosName'),
+	driver : document.querySelector('#txtDriver'),
+	tool : document.querySelector('#txtTool'),
 	posx : document.querySelector('#txtCfgPosX'),
 	posy : document.querySelector('#txtCfgPosY'),
 	posz : document.querySelector('#txtCfgPosZ'),
@@ -143,9 +145,10 @@ var domPos = {
 	dPosx : document.querySelector('#txtDeltaPosX'),
 	dPosy : document.querySelector('#txtDeltaPosY'),
 	dPosz : document.querySelector('#txtDeltaPosZ'),
-	dDirx : document.querySelector('#txtDeltaRadX'),
-	dDiry : document.querySelector('#txtDeltaRadY'),
-	dDirz : document.querySelector('#txtDeltaRadZ'),
+	dDir : document.querySelector('#txtDeltaRad'),
+	//dDirx : document.querySelector('#txtDeltaRadX'),
+	//dDiry : document.querySelector('#txtDeltaRadY'),
+	//dDirz : document.querySelector('#txtDeltaRadZ'),
 	inpos : document.querySelector('#txtInPos'),
 	inposa : document.querySelector('#txtInPosA'),
 	inposp : document.querySelector('#txtInPosP'),
@@ -183,9 +186,10 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dPosx.value = fmt(pos.Delta.posx);
 		domPos.dPosy.value = fmt(pos.Delta.posy);
 		domPos.dPosz.value = fmt(pos.Delta.posz);
-		domPos.dDirx.value = fmt(pos.Delta.dirx);
-		domPos.dDiry.value = fmt(pos.Delta.diry);
-		domPos.dDirz.value = fmt(pos.Delta.dirz);
+		//domPos.dDirx.value = fmt(pos.Delta.dirx);
+		//domPos.dDiry.value = fmt(pos.Delta.diry);
+		//domPos.dDirz.value = fmt(pos.Delta.dirz);
+		domPos.dDir.value = fmt(pos.Delta.dir);
 		domPos.inposp.style.visibility 		= (pos.Pos.in_location != null) ? "visible" : "hidden";
 		domPos.inposp.style.backgroundColor = (pos.Pos.in_location == 1) ? "green" : "red";
 		domPos.inposa.style.visibility 		= (pos.Pos.in_angle != null) ? "visible" : "hidden";
@@ -203,9 +207,10 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.dPosx.value = '';
 		domPos.dPosy.value = '';
 		domPos.dPosz.value = '';
-		domPos.dDirx.value = '';
-		domPos.dDiry.value = '';
-		domPos.dDirz.value = '';
+		//domPos.dDirx.value = '';
+		//domPos.dDiry.value = '';
+		//domPos.dDirz.value = '';
+		domPos.dDir.value = '';
 		domPos.inposp.style.visibility 		= "hidden";
 		domPos.inposa.style.visibility 		= "hidden";
 	}		
@@ -365,7 +370,8 @@ globalThis.UpdateParams = function(paramStr)
 	let param = JSON.parse(paramStr);
 	domParam.job.value = param.Job;
 	domParam.task.value = param.Task;
-	// param.Tool;
+	domParam.driver.value = param.Driver;
+	domParam.tool.value = param.Tool;
 	domParam.posx.value = param.Pos.posx;
 	domParam.posy.value = param.Pos.posy;
 	domParam.posz.value = param.Pos.posz;

@@ -26,6 +26,8 @@
             <div><input id="inpWorkspace" type="text" readonly></div>
             <div><label>Name</label></div>
             <div><input id="inpPosName" type="text" readonly></div>
+            <div><label>Tool</label></div>
+            <div><input id="txtTool" type="text" readonly></div>
           </div>
           <br/>
           <div class="btn-group btn-primary">
@@ -58,7 +60,7 @@
             <div><input id="txtCfgPosX" type="number" readonly></div>
             <div><input id="txtCfgPosY" type="number" readonly></div>
             <div><input id="txtCfgPosZ" type="number" readonly></div>
-            <div><label>Winkel [°]</label></div>
+            <div><label>Vector [%]</label></div>
             <div><input id="txtCfgRadX" type="number" readonly></div>
             <div><input id="txtCfgRadY" type="number" readonly></div>
             <div><input id="txtCfgRadZ" type="number" readonly></div>
@@ -78,7 +80,7 @@
             <div><input id="txtActPosX" type="number" readonly></div>
             <div><input id="txtActPosY" type="number" readonly></div>
             <div><input id="txtActPosZ" type="number" readonly></div>
-            <div><label>Winkel [°]</label></div>
+            <div><label>Vector [%]</label></div>
             <div><input id="txtActRadX" type="number" readonly></div>
             <div><input id="txtActRadY" type="number" readonly></div>
             <div><input id="txtActRadZ" type="number" readonly></div>
@@ -87,9 +89,9 @@
             <div><input id="txtDeltaPosY" type="number" readonly></div>
             <div><input id="txtDeltaPosZ" type="number" readonly></div>
             <div><label>delta [°]</label></div>
-            <div><input id="txtDeltaRadX" type="number" readonly></div>
-            <div><input id="txtDeltaRadY" type="number" readonly></div>
-            <div><input id="txtDeltaRadZ" type="number" readonly></div>
+            <div><input id="txtDeltaRad" type="number" readonly></div>
+            <div><!--<input id="txtDeltaRadY" type="number" readonly>--></div>
+            <div><!--<input id="txtDeltaRadZ" type="number" readonly>--></div>
             <div><label>InPos</label></div>
             <div><input id="txtInPos" type="text" readonly></div>
             <div><input id="txtInPosP" type="text" value="Pos." readonly></div>
@@ -105,6 +107,8 @@
         <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
           <h2 cds-text="headline">Tracking info</h2>
           <div class="workspacecontainer">
+            <div><label>Driver</label></div>
+            <div><input id="txtDriver" type="text" readonly></div>
             <div><label>Status</label></div>
             <div><input id="txtStatus" type="text" readonly></div>
           </div>
