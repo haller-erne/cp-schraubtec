@@ -32,7 +32,8 @@ local math = require('math')
 local drivers = {
     -- TODO: add position encoding, defaults, ... to driver
     ART = require('positioning_ART'),
-    IO = require('positioning_IO')
+    IO = require('positioning_IO'),
+    DIGITAL = require('positioning_DIGITAL'),
 }
 
 -- allow adding/overriding driver modules
@@ -79,6 +80,18 @@ M.UpdatePos_Abs3D = function(tool, x, y, z, rx, ry, rz)
     end
     if not chn.drv.UpdatePos_Abs3D then return nil, 'Abs3D not implemented!' end
     local pos, err = chn.drv.UpdatePos_Abs3D(chn, x,y,z,rx,ry,rz)
+    return pos, err
+end
+-- simple digital inpos
+M.UpdatePos_InPos = function(tool, isInPos)
+    -- select tool, then set inpos
+    local chn = M.channels[tool]
+    if chn == nil then
+        XTRACE(1, 'error invalid tool')
+        return nil, 'invalid tool'
+    end
+    if not chn.drv.UpdatePos_InPos then return nil, 'InPos not implemented!' end
+    local pos, err = chn.drv.UpdatePos_InPos(chn, isInPos)
     return pos, err
 end
 
@@ -600,6 +613,7 @@ local function OnSidePanelMsg(name, cmd)
                 Driver = chn.cfg.DRIVER,
                 Ini = chn.cfg,
             }
+            p.Pos.PosCtrl = M.curtask.PosCtrl       -- add the missing position number
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdateParams('"..par.."');")
             return

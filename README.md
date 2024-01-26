@@ -18,6 +18,17 @@ gemeinsam verwendeten Verzeichnisse:
 - `./configuration`: Hier liegt eine Beispiel-Datenbank mit Arbeitsabläufen und
   Bildern
 
+Da die Stationen immer wieder umgebaut werden, gibt es ggf. auch weitere Verzeichnisse
+mit angepasster Konfiguration, aktuell sind dies:
+
+- `./ST03-2xEIP+ART`: Jäger-Station mit zwei kabelgebundenen Schraubsystemen am
+  Handling und nexo/GWK. Positionierung über IO-Link-Geber für beide Handlings
+  (1 x CarboArm (3.5D mit Länge, Winkel, 2D-Neigung), 1 x HandyFlex (2D Länge/Winkel))
+  und für GWK/Nexo über die AR-Tracking Kamera
+- `./ST03-GWK`: Der umgebaute GWK-Wagen mit CarboArm und AR-Tracking
+- `./ST03-HandyTrack`: Einfaches Setup, nur mit digital-IO (über Modbus) für die
+  Positionserkennung (HandyTrack gibt InPos und Positionsnummer digital aus)
+
 ## Allgemeines und ID-Code-Struktur
 
 Für alle Stationen gibt es dieselbe ID-Code-Struktur, bestehend aus den folgenden

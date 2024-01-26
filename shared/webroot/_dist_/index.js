@@ -128,6 +128,7 @@ var domParam = {
 	task: document.querySelector('#inpPosName'),
 	driver : document.querySelector('#txtDriver'),
 	tool : document.querySelector('#txtTool'),
+	posnum : document.querySelector('#txtPosNum'),
 	posx : document.querySelector('#txtCfgPosX'),
 	posy : document.querySelector('#txtCfgPosY'),
 	posz : document.querySelector('#txtCfgPosZ'),
@@ -372,6 +373,7 @@ globalThis.UpdateParams = function(paramStr)
 	domParam.task.value = param.Task;
 	domParam.driver.value = param.Driver;
 	domParam.tool.value = param.Tool;
+	domParam.posnum.value = param.Pos.PosCtrl;
 	domParam.posx.value = param.Pos.posx;
 	domParam.posy.value = param.Pos.posy;
 	domParam.posz.value = param.Pos.posz;

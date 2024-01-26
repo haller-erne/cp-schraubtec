@@ -1,7 +1,16 @@
 -- Generic low-level Ethernet-IP module
 -- To use, require this module and add OnConnChanged and OnDataChanged functions
 --
--- List all Ethernet/IP devices in station.ini!
+-- List all Ethernet/IP devices in section [STATION_IO_ENIP] in station.ini as follows:
+--
+--  [STATION_IO_ENIP]
+--  ; Define the Ethernet/IP devices used in this station as <name>=<ip>,<model>
+--  ; Reference a device by <name> later from the station_io_enip.lua LUA module.
+--  ; NOTE: do a `local io = require('station_io_enip')` to use this module.
+--  DEBUG=0
+--  IOLINK_MASTER1=192.168.1.71,TURCK_AL1324
+--  BALLUF_MODULE=192.168.1.72,BALLUF_S2465
+--
 --
 local enip = require("luaenip")     -- load our LuaENIP.dll Ethernet/IP scanner library
 local struct = require("struct")    -- see http://www.inf.puc-rio.br/~roberto/struct/
