@@ -20,6 +20,7 @@
             ],
             "stopOnEntry": true,
             "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
+            "verbose": false,
             "integratedTerminal": true
         },
         {

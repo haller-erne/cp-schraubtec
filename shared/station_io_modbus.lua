@@ -153,6 +153,7 @@ local function read_ini_params(inisection)
             if not cfg then
                 return nil, err
             end
+            cfg.start_time = os.clock()
             dev[name] = {}
             dev[name].cfg = cfg
             -- create an modbus driver instance
@@ -209,16 +210,20 @@ local function Poll()
         -- check connection state
         local connected = dev.ctx:is_connected()
         if connected ~= dev.connected then        -- connection state changed
-            if M.OnConnChanged then M.OnConnChanged(dev, connected) end
-            if connected then
-                XTRACE(16, name..": Cyclic IO running!")
-                ResetLuaAlarm(name)
+            if not connected and dev.connected == nil and os.clock() - dev.cfg.start_time < 5 then
+                -- if not connected during startup, stay silent for 5 seconds
             else
-                XTRACE(1, name.." DISCONNECTED!")
-                SetLuaAlarm(name, -2, name.." disconnected!")
+                if M.OnConnChanged then M.OnConnChanged(dev, connected) end
+                if connected then
+                    XTRACE(16, name..": Cyclic IO running!")
+                    ResetLuaAlarm(name)
+                else
+                    XTRACE(1, name.." DISCONNECTED!")
+                    SetLuaAlarm(name, -2, name.." disconnected!")
+                end
+                dev.connected = connected
             end
         end
-        dev.connected = connected
         -- update data
         if dev.connected then
             -- read inputs

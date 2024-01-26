@@ -173,7 +173,7 @@ end
 function M.SelectPos(tool, JobName, BoltName, PosCtrl, ToolPosDef)
     local chn = M.channels[tool]
     if chn == nil then
-        XTRACE(1, 'Positioning: start task: error invalid tool')
+        XTRACE(1, 'Positioning: start task: error invalid tool: '..param_as_str(tool))
         return nil, 'invalid tool'
     end
     local posname = JobName..BoltName
@@ -410,6 +410,11 @@ local TaskState_old, TaskStep_old
 --  TaskStep:
 --
 function PS_CheckToolPosition(Tool, JobName, BoltName, PosCtrl, ToolPosDef, TaskState, TaskStep)
+    local chn = M.channels[Tool]
+    if chn == nil then
+        -- seems like the positioning driver name is missing for the tool in station.ini!
+        return 'invalid tool '..param_as_str(Tool)
+    end
     M.curtask.PosCtrl = PosCtrl
     M.curtask.Tool    = Tool
     local key = M.GetKey(JobName, BoltName)
@@ -485,6 +490,11 @@ end
 
 --------------------------------------------------------------------------------
 function PS_TeachToolPosition(State, Tool, JobName, BoltName, PosCtrl, ToolPosDef)
+    local chn = M.channels[Tool]
+    if chn == nil then
+        XTRACE(1, 'Positioning: teach_tool_position: error invalid tool: '..param_as_str(Tool))
+        return nil, nil,nil,nil, '-', '!! Invalid tool '..param_as_str(Tool)..' !!'
+    end
 
 -- "parameter/return value" State: 	unknown = 0, teaching_in_process = 1, start_teaching = 2, stop_teaching = 3
     if not M.tracking then
@@ -545,8 +555,9 @@ function Panel_OnToolButtonClicked(tool, toolType, WFState, WFLockReason)
     local isAdmin = (UserManager.user_level > 1)
     if paused and isAdmin and M.curtask.PosCtrl and M.curtask.PosCtrl > 0 then
         ShowSidePanel()
+        return false            -- true would block OGS default click handling
     end
-    return false            -- true would block OGS default click handling
+    return true -- do not allow to switch to teach mode if the above parameters are not valid!
 end
 function Panel_OnSTKNButtonClicked(tool, toolType, WFState, WFLockReason)
     -- TODO: maybe only show the panel if paused?
@@ -564,6 +575,8 @@ local function OnSidePanelMsg(name, cmd)
     local chn = nil
     if M.curtask.Tool then
         chn = M.channels[M.curtask.Tool]
+    else
+        error("failed!")
     end
     local o = json.decode(cmd)
     if o and o.cmd then
@@ -610,9 +623,13 @@ local function OnSidePanelMsg(name, cmd)
                 Task = M.curtask.task,
                 Tool = M.curtask.Tool,            -- TODO: tool name?
                 Pos = M.curtask.pos,
-                Driver = chn.cfg.DRIVER,
-                Ini = chn.cfg,
+                Driver = '',
+                Ini = {},
             }
+            if chn ~= nil then
+                p.Driver = chn.cfg.DRIVER
+                p.Ini = chn.cfg
+            end
             p.Pos.PosCtrl = M.curtask.PosCtrl       -- add the missing position number
             local par = json.encode(p)
             Browser.ExecJS_async(name, "UpdateParams('"..par.."');")
