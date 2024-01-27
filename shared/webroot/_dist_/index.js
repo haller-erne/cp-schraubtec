@@ -155,11 +155,22 @@ var domPos = {
 	inposp : document.querySelector('#txtInPosP'),
 	state : document.querySelector('#txtStatus'),
 };
+var angleDigits = 0;
 
 function fmt(fVal)
 {
 	if (fVal == '') return '';
 	return Math.round(fVal);	// Math.round(fVal*10)/10;
+}
+function fmtAngle(fVal)
+{
+	if (fVal == '') return '';
+	if (angleDigits == 0)
+		//return Math.round(fVal);	// Math.round(fVal*10)/10;
+		return Math.round(fVal*1000)/1000;	
+	else
+	//return Math.round(fVal*100)/100;	// Math.round(fVal*10)/10;
+	return Math.round(fVal*10000)/10000;
 }
 // Called as a response to OGS.SendCmd('{ "cmd":"get-position" }')
 // update the DOM accordingly
@@ -181,16 +192,16 @@ globalThis.UpdatePosition = function(posStr)
 		domPos.posx.value = fmt(pos.Pos.posx);
 		domPos.posy.value = fmt(pos.Pos.posy);
 		domPos.posz.value = fmt(pos.Pos.posz);
-		domPos.dirx.value = fmt(pos.Pos.dirx);
-		domPos.diry.value = fmt(pos.Pos.diry);
-		domPos.dirz.value = fmt(pos.Pos.dirz);
+		domPos.dirx.value = fmtAngle(pos.Pos.dirx);
+		domPos.diry.value = fmtAngle(pos.Pos.diry);
+		domPos.dirz.value = fmtAngle(pos.Pos.dirz);
 		domPos.dPosx.value = fmt(pos.Delta.posx);
 		domPos.dPosy.value = fmt(pos.Delta.posy);
 		domPos.dPosz.value = fmt(pos.Delta.posz);
 		//domPos.dDirx.value = fmt(pos.Delta.dirx);
 		//domPos.dDiry.value = fmt(pos.Delta.diry);
 		//domPos.dDirz.value = fmt(pos.Delta.dirz);
-		domPos.dDir.value = fmt(pos.Delta.dir);
+		domPos.dDir.value = fmtAngle(pos.Delta.dir);
 		domPos.inposp.style.visibility 		= (pos.Pos.in_location != null) ? "visible" : "hidden";
 		domPos.inposp.style.backgroundColor = (pos.Pos.in_location == 1) ? "green" : "red";
 		domPos.inposa.style.visibility 		= (pos.Pos.in_angle != null) ? "visible" : "hidden";
@@ -328,6 +339,11 @@ var saveChanges = function(e) {
 	}
 }
 btnTolSave.addEventListener('click', (e) => saveChanges(e));
+var toggleAngleView = function(e) {
+	if (0 == angleDigits) angleDigits = 2;
+	else angleDigits = 0;
+}
+domPos.dDir.addEventListener('click', (e) => toggleAngleView(e));
 
 var saveReference = function(e) {
 	let cmd = {
@@ -377,9 +393,9 @@ globalThis.UpdateParams = function(paramStr)
 	domParam.posx.value = param.Pos.posx;
 	domParam.posy.value = param.Pos.posy;
 	domParam.posz.value = param.Pos.posz;
-	domParam.dirx.value = param.Pos.dirx;
-	domParam.diry.value = param.Pos.diry;
-	domParam.dirz.value = param.Pos.dirz;
+	domParam.dirx.value = fmtAngle(param.Pos.dirx);
+	domParam.diry.value = fmtAngle(param.Pos.diry);
+	domParam.dirz.value = fmtAngle(param.Pos.dirz);
 
 	inpTol[0].inp.value = param.Pos.r1;
 	inpTol[1].inp.value = param.Pos.h1;

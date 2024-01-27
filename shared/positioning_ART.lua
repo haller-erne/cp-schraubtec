@@ -160,9 +160,9 @@ M.GetCurrentToolPos = function(chn, expectedpos)
 
     local inpos, pos  = M.dev:find_position(chn.chn)
     if pos ~= nil then
-        if pos.dirx then pos.dirx = 100 * pos.dirx end
-        if pos.diry then pos.diry = 100 * pos.diry end
-        if pos.dirz then pos.dirz = 100 * pos.dirz end
+        --if pos.dirx then pos.dirx = 1000 * pos.dirx end
+        --if pos.diry then pos.diry = 1000 * pos.diry end
+        --if pos.dirz then pos.dirz = 1000 * pos.dirz end
     end
     if inpos ~= nil then
 		if inpos == 1 then

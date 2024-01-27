@@ -109,7 +109,7 @@ end
 -- note, that this is limited to 64 chars
 function M.EncodePos(cur_x, cur_y, cur_z, pos_cfg, dirx, diry, dirz)
     -- total length = 25 (max range: +/-9999mm <~> +/-10m)
-    return string.format("%01d%+06d%+06d%+06d%03d%03d%03d%03d%-04d%+04d%+04d%+04d%03d",
+    return string.format("%01d%+06.0f%+06.0f%+06.0f%03d%03d%03d%03d%-04d%+05.0f%+05.0f%+05.0f%03d",
         pos_cfg.tolerance,      -- type of tolerance
         cur_x, cur_y, cur_z,    -- in mm
         pos_cfg.r1,        -- in mm
@@ -117,13 +117,13 @@ function M.EncodePos(cur_x, cur_y, cur_z, pos_cfg, dirx, diry, dirz)
         pos_cfg.r2,        -- in mm
         pos_cfg.h2,        -- in mm
 		pos_cfg.offset or 0,	-- in mm
-        dirx, diry, dirz,       -- degrees
+        dirx*1000, diry*1000, dirz*1000, -- 0.1 degrees or normal-vector*1000
         pos_cfg.angle)          -- degrees
 end
 
 -- convert a database string int a position info lua object
 function M.DecodePos(ToolDefPos, id)
-   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 50 then
+   if type(ToolDefPos) ~= "string" or #ToolDefPos ~= 53 then
         -- nothing stored in the database
         local pos = {      				-- table with position info
             id = id,    				        -- position_id (is unique in the job context)
@@ -154,10 +154,10 @@ function M.DecodePos(ToolDefPos, id)
         r2 = tonumber(ToolDefPos:sub(26, 28)),
         h2 = tonumber(ToolDefPos:sub(29, 31)),
         offset = tonumber(ToolDefPos:sub(32, 35)),      -- tool head offset/length
-        dirx = tonumber(ToolDefPos:sub(36, 39)),
-        diry = tonumber(ToolDefPos:sub(40, 43)),
-        dirz = tonumber(ToolDefPos:sub(44, 47)),
-        angle = tonumber(ToolDefPos:sub(48, 50)),
+        dirx = tonumber(ToolDefPos:sub(36, 40))/1000,
+        diry = tonumber(ToolDefPos:sub(41, 45))/1000,
+        dirz = tonumber(ToolDefPos:sub(46, 50))/1000,
+        angle = tonumber(ToolDefPos:sub(51, 53)),
     }
     return pos
 end
@@ -605,16 +605,30 @@ local function OnSidePanelMsg(name, cmd)
                     p.Delta.diry = p.Pos.diry - M.curtask.pos.diry
                     p.Delta.dirz = p.Pos.dirz - M.curtask.pos.dirz
                     -- Winkelabweichung zwischen den zwei Einheitsvektoren berechnen
-                    local rad = math.acos(p.Pos.dirx/100 * M.curtask.pos.dirx/100
-                                            + p.Pos.diry/100 * M.curtask.pos.diry/100
-                                            + p.Pos.dirz/100 * M.curtask.pos.dirz/100)
+                    -- Theoretisch sollte das Skalarprodukt zwischen zwei Einheitsvektoren
+                    -- immer einen Wert zwischen -1 und 1 haben, aber wegen Rundung kann
+                    -- die Länge auch größer 1 werden --> dann schlägt acos fehl...
+                    local p1 = p.Pos
+                    local p2 = M.curtask.pos
+                    local len1 = p1.dirx * p1.dirx + p1.diry * p1.diry + p1.dirz * p1.dirz
+                    local len2 = p2.dirx * p2.dirx + p2.diry * p2.diry + p2.dirz * p2.dirz
+                    local snen = p1.dirx * p2.dirx + p1.diry * p2.diry + p1.dirz * p2.dirz
+                    local szal = math.sqrt(len1) * math.sqrt(len2)
+                    local sp = snen / szal
+                    if (sp > 1) then sp = 1 end     -- rounding errors
+                    if (sp < -1) then sp = -1 end   -- rounding errors
+                    local rad = math.acos(sp)
                     p.Delta.dir = 180 * (rad / math.pi)
                 end
             else
                 p.State = -1                    -- Positioning not running
                 p.Error = chn.err or 'no data'  -- Positioning error message
             end
-            local par = json.encode(p)
+            --local par = json.encode(p)
+            local ok, par = pcall(json.encode, p)
+            if not ok then
+                error(par)
+            end
             Browser.ExecJS_async(name, "UpdatePosition('"..par.."');")
             return
         elseif o.cmd == 'get-params' then

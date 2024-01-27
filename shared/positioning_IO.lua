@@ -144,6 +144,7 @@ M.UpdatePos_RotIncLenAbs = function(chn, rotation_inc, distance_abs, tilt_x, til
         posx = x_abs,
         posy = y_abs,
         posz = 0,
+        -- TODO: convert angle to einheitsvektor!
         dirx = tilt_x,
         diry = tilt_y,
         dirz = tilt_z,
@@ -199,6 +200,7 @@ M.UpdatePos_RotIncLenInc = function(chn, rotation_inc, distance_inc, tilt_x, til
         posx = x_abs,
         posy = y_abs,
         posz = 0,
+        -- TODO: convert angle to einheitsvektor!
         dirx = tilt_x,
         diry = tilt_y,
         dirz = tilt_z,
