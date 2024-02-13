@@ -380,7 +380,7 @@ local function OnWorkflowStateChanged(info)
 
     -- check end of workflow
     if wf.State ~= M.wfState then
-        if wf.State == 0 then           -- workflow completed
+        if wf.State <= 1 then           -- workflow completed or wait for job
             XTRACE(16, 'Tracking: STOP: ' .. wf.JobName .. ':' .. wf.BoltName);
             M.StopTasks(wf.JobName)
         end
@@ -613,7 +613,8 @@ local function OnSidePanelMsg(name, cmd)
                     local len1 = p1.dirx * p1.dirx + p1.diry * p1.diry + p1.dirz * p1.dirz
                     local len2 = p2.dirx * p2.dirx + p2.diry * p2.diry + p2.dirz * p2.dirz
                     local snen = p1.dirx * p2.dirx + p1.diry * p2.diry + p1.dirz * p2.dirz
-                    local szal = math.sqrt(len1) * math.sqrt(len2)
+                    local ok, szal = pcall(math.sqrt(len1) * math.sqrt(len2))
+                    if not ok or szal == 0 then szal = 1 end
                     local sp = snen / szal
                     if (sp > 1) then sp = 1 end     -- rounding errors
                     if (sp < -1) then sp = -1 end   -- rounding errors

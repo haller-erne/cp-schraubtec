@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Billboard video</title>
+  <style>
+body {margin:0;padding:0;background-color: black}  
+.pk_video {
+  background-color: black !important; /* or whatever you want */
+}  
+.buttons {
+  background-color: white;
+  text-align: left;
+}
+  </style>
+  <script>
+  function loadVideo(filename) {
+    const video = document.getElementById('velem');
+    const source = document.getElementById('vsrc');
+    source.setAttribute('src', filename); //, `video/${name}.mp4`);
+    video.load()
+  }
+  </script>
+</head>
+
+<body>
+  <div class="buttons">
+      <a onclick="loadVideo('socket_belt_WLAN_de_20230306.mp4')">Socket-Belt DE</a>&nbsp;
+      <a onclick="loadVideo('socket_belt_WLAN_en_20230306.mp4')">Socket-Belt EN</a>&nbsp;
+      <a onclick="window.open('socket_belt_WLAN_de_20230306.pdf')">PDF</a>&nbsp;
+  </div>
+  <div class="pk_video">
+    <video id="velem" width="98%" height="98%" controls autoplay loop>
+        <source id="vsrc" src="socket_belt_WLAN_de_20230306.mp4" type="video/mp4">
+    </video>
+  </div>
+</body>
+</html>

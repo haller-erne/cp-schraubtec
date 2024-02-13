@@ -21,7 +21,8 @@
             "stopOnEntry": true,
             "cwd": "D:/Sandboxes/ogs/ogs-trunk/bin/debug/",
             "verbose": false,
-            "integratedTerminal": true
+            "integratedTerminal": true,
+            "pullBreakpointsSupport": true,
         },
         {
             "name": "heOGS (local lua debugger)",
