@@ -6,7 +6,8 @@ local bit32 = require('bit32')      -- bit manipulation
 local positioning = require('positioning')
 
 local M = {
-    P = { {}, {}, {}, {} },         -- 4 IO-Link ports. TODO: add some IOLINK-Device handlers/classes
+    P1 = { {}, {}, {}, {} },         -- 4 IO-Link ports. TODO: add some IOLINK-Device handlers/classes
+    P2 = { {}, {}, {}, {} },         -- 4 IO-Link ports. TODO: add some IOLINK-Device handlers/classes
     data = {
         -- TODO:: set to nil, if data is not valid (IO-Link error, etc)
         distance = 0,               -- [mm] Wenglor IO-Link laser distance sensor
@@ -33,30 +34,31 @@ enip_io.OnDataChanged = function(dev)
     --XTRACE(16, "Data changed: "..dev.cfg.name)
     if dev.cfg.name == 'IOLINK_MASTER' then
         -- Decode all data from the IO-Link master
+        local P = M.P1
         for i = 1,4 do
-            M.P[i].i_old = M.P[i].i
-            M.P[i].PQI_old = M.P[i].PQI
+            P[i].i_old = P[i].i
+            P[i].PQI_old = P[i].PQI
         end
         -- TR-electronic CMV582M absolute rotation sensor
-        M.P[1].PQI = dev.data.i:sub(4+1, 5+1)
-        M.P[1].i = dev.data.i:sub(12+1, 12+32)
-        local h, l = struct.unpack("<hH", M.P[1].i)
+        P[1].PQI = dev.data.i:sub(4+1, 5+1)
+        P[1].i = dev.data.i:sub(12+1, 12+32)
+        local h, l = struct.unpack("<hH", P[1].i)
         M.data.rotation = l     -- don't care about the high word
-        XTRACE(16, string.format("%s: ROT: %s", dev.cfg.name, basexx.to_hex(M.P[1].i)))
+        XTRACE(16, string.format("%s: ROT: %s", dev.cfg.name, basexx.to_hex(P[1].i)))
         -- Wenglor P1PY101 laser distance sensor
-        M.P[2].PQI = dev.data.i:sub(6+1, 7+1)
-        M.P[2].i = dev.data.i:sub(44+1, 44+32)
-        M.data.distance = struct.unpack("<h", M.P[2].i)
+        P[2].PQI = dev.data.i:sub(6+1, 7+1)
+        P[2].i = dev.data.i:sub(44+1, 44+32)
+        M.data.distance = struct.unpack("<h", P[2].i)
         -- IFM JN2200 2D tilt sensor
-        M.P[3].PQI = dev.data.i:sub(8+1, 9+1)
-        M.P[3].i = dev.data.i:sub(76+1, 76+32)
-        local status, diags, x, y = struct.unpack("<BBhh", M.P[3].i)
-        M.data.tilt_x = x
-        M.data.tilt_y = y
+        P[3].PQI = dev.data.i:sub(8+1, 9+1)
+        P[3].i = dev.data.i:sub(76+1, 76+32)
+        local x, y = struct.unpack("<hh", P[3].i)
+        M.data.tilt_x = x/100
+        M.data.tilt_y = y/100
         -- IFM AL2321 Port 4 digital I/O module
-        M.P[4].PQI = dev.data.i:sub(10+1, 11+1)
-        M.P[4].i = dev.data.i:sub(108+1, 108+32)
-        local b1, b2, b3, b4 = struct.unpack("<BBBB", M.P[4].i)
+        P[4].PQI = dev.data.i:sub(10+1, 11+1)
+        P[4].i = dev.data.i:sub(108+1, 108+32)
+        local b1, b2, b3, b4 = struct.unpack("<BBBB", P[4].i)
         M.data.io = {}
         local io = M.data.io
         io.ccwsel = bit32.band(b4, 0x10)
@@ -68,9 +70,62 @@ enip_io.OnDataChanged = function(dev)
         io.black  = bit32.band(b3, 0x04)
         for i = 1,4 do
             -- TODO: throw alarm, if any of the IO-link ports report an error!
-            local P = M.P[i]
-            if P.PQI ~= P.PQI_old then
-                XTRACE(16, string.format("%s: P%d: PQI now %s", dev.cfg.name, i, basexx.to_hex(P.PQI)))
+            local Q = P[i]
+            if Q.PQI ~= Q.PQI_old then
+                XTRACE(16, string.format("%s: P%d: PQI now %s", dev.cfg.name, i, basexx.to_hex(Q.PQI)))
+            end
+            --if P.i ~= P.i_old then
+            --    XTRACE(16, string.format("P%d: input now %s", i, basexx.to_hex(P.i)))
+            --end
+        end
+        if P[4].i ~= P[4].i_old then
+            XTRACE(16, string.format("P4: input now %s", basexx.to_hex(P[4].i)))
+        end
+
+        -- update dependencies
+        if P[1].i ~= P[1].i_old or P[2].i ~= P[2].i_old or P[3].i ~= P[3].i_old then
+            XTRACE(16, string.format("%s: P1: rotation = %u, P2: distance = %d, P3: tilt x/y = %d/%d", 
+                dev.cfg.name, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y))
+            -- make them mm and degrees?
+            -- update the tool tracking - we use tool 3 connected to the len/rot sensors
+            positioning.UpdatePos_RotIncLenAbs(3, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
+        end
+        if P[4].i ~= P[4].i_old then
+            XTRACE(16, string.format("P4: CCWSel=%d, CWSel=%d, Start=%d, Anw=%d", io.ccwsel, io.cwsel, io.radial, io.sensor))
+        end
+
+    elseif dev.cfg.name == 'IOLINK_CARBO' then
+        -- Decode all data from the IO-Link master
+        local P = M.P2
+        for i = 1,4 do
+            P[i].i_old = P[i].i
+            P[i].PQI_old = P[i].PQI
+        end
+        -- TR-electronic CMV582M absolute rotation sensor
+        P[1].PQI = dev.data.i:sub(4+1, 5+1)
+        P[1].i = dev.data.i:sub(12+1, 12+32)
+        local h, l = struct.unpack("<hH", P[1].i)
+        M.data.rotation = l     -- don't care about the high word
+        XTRACE(16, string.format("%s: ROT: %s", dev.cfg.name, basexx.to_hex(P[1].i)))
+        -- Wenglor P1PY101 laser distance sensor
+        P[2].PQI = dev.data.i:sub(6+1, 7+1)
+        P[2].i = dev.data.i:sub(44+1, 44+32)
+        M.data.distance = struct.unpack("<h", P[2].i)
+        -- IFM JN2200 2D tilt sensor
+        P[3].PQI = dev.data.i:sub(8+1, 9+1)
+        P[3].i = dev.data.i:sub(76+1, 76+32)
+        local x, y = struct.unpack("<hh", P[3].i)
+        M.data.tilt_x = x/100
+        M.data.tilt_y = y/100
+        -- IFM AL2321 Port 4 digital I/O module
+        P[4].PQI = dev.data.i:sub(10+1, 11+1)
+        P[4].i = dev.data.i:sub(108+1, 108+32)
+        local b1, b2, b3, b4 = struct.unpack("<BBBB", P[4].i)
+        for i = 1,4 do
+            -- TODO: throw alarm, if any of the IO-link ports report an error!
+            local Q = P[i]
+            if Q.PQI ~= Q.PQI_old then
+                XTRACE(16, string.format("%s: P%d: PQI now %s", dev.cfg.name, i, basexx.to_hex(Q.PQI)))
             end
             --if P.i ~= P.i_old then
             --    XTRACE(16, string.format("P%d: input now %s", i, basexx.to_hex(P.i)))
@@ -78,17 +133,13 @@ enip_io.OnDataChanged = function(dev)
         end
 
         -- update dependencies
-        if M.P[1].i ~= M.P[1].i_old or M.P[2].i ~= M.P[2].i_old or M.P[3].i ~= M.P[3].i_old then
+        if P[1].i ~= P[1].i_old or P[2].i ~= P[2].i_old or P[3].i ~= P[3].i_old then
             XTRACE(16, string.format("%s: P1: rotation = %u, P2: distance = %d, P3: tilt x/y = %d/%d", 
                 dev.cfg.name, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y))
             -- make them mm and degrees?
             -- update the tool tracking - we use tool 3 connected to the len/rot sensors
-            positioning.UpdatePos_RotIncLenAbs(3, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
+            positioning.UpdatePos_RotIncLenAbs(4, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
         end
-        if M.P[4].i ~= M.P[4].i_old then
-            XTRACE(16, string.format("P4: CCWSel=%d, CWSel=%d, Start=%d, Anw=%d", io.ccwsel, io.cwsel, io.radial, io.sensor))
-        end
-
     end
 end
 

@@ -2,7 +2,7 @@
 OGS.Project.AddPath('../shared')
 
 -- Start the debugger (automatically detects, if running under VSCode Lua Local Debug)
-require('lua-local-debugger')
+local lldebugger = require('lua-local-debugger')
 requires = {
 	"barcode",
 	"user_manager",

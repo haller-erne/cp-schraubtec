@@ -6,6 +6,7 @@ require('lua-local-debugger')
 
 requires = {
 	"barcode",
+	"usb_button",
 	--"user_manager",
 	--"positioning_enip_iolink",
 	--"custom",
@@ -14,11 +15,10 @@ requires = {
 	"lua_tool_delay",
 	"lua_tool_tass",
 	"station_io",
-	"heEventLogMqtt",
 	-- "lua_tool_mqtt",
 	"sim",
 }
-current_project.logo_file = 'rexroth.png'
+current_project.logo_file = 'JH.png'
 current_project.billboard = 'http://127.0.0.1:59990/billboard.html'
 
 
