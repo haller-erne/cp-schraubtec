@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Clarity Core - Snowpack App</title>
+    <title>Tool Positioning</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="positioning.css" />
   </head>
@@ -11,7 +11,7 @@
 
     <div class="demo-layout">
       <header class="demo-header" cds-layout="p:md p@sm:lg">
-        <h1>Positionierung</h1>
+        <h1>Positionierung <cds-badge aria-label="notification 12" status="danger">admin</cds-badge></h1>
       </header>
 
       <div cds-layout="gap:md gap@md:xl p@sm:xl p-x:lg p-b:sm container:xl container:center"><!-- p-y@lg:xxl -->
@@ -19,8 +19,8 @@
         <!-- Parameters -->
         </br>
         <div cds-layout="vertical col@sm:7">
-          <h2 cds-text="headline">Parameter <cds-badge aria-label="notification 12" status="danger">admin</cds-badge></h2>
-          <br/>
+          <!--<h2 cds-text="headline">Parameter </h2>
+          <br/>-->
           <div class="workspacecontainer">
             <div><label>Workspace</label></div>
             <div><input id="inpWorkspace" type="text" readonly></div>
@@ -109,33 +109,27 @@
         <!-- AGV (admin only) -->
         </br>
         <div cds-layout="vertical gap:lg gap@md:xl col@sm:7">
-          <h2 cds-text="headline">Tracking info</h2>
+          <div style="display:grid; grid-template-columns: 2fr 1fr;">
+            <h2 cds-text="headline">Tracking info</h2>
+            <cds-button id="btnRef" status="primary" tabindex="0" role="button" action="solid" size="md" loading-state="default" aria-disabled="false">Reference</cds-button>
+          </div>
           <div class="workspacecontainer">
             <div><label>Driver</label></div>
             <div><input id="txtDriver" type="text" readonly></div>
             <div><label>Status</label></div>
             <div><input id="txtStatus" type="text" readonly></div>
           </div>
+          <!--
           <div cds-layout="grid gap:xs container:xl container:center">
-            <!-- row 1: 2-columns for state/speed -->
             <div cds-layout="col:3">
-              <!--<div>Target station</div>
-              <cds-select control-width="stretch">
-                <select id="agv_number" style="width: 100%">
-                  <option value="1">Station 1</option>
-                  <option value="2">Station 2</option>
-                  <option value="3">Station 3</option>
-                </select>
-              </cds-select>-->
             </div>
             <div cds-layout="col:1">
             </div>
             <div cds-layout="col:8">
-              <!--</br>
-              <cds-button id="agv_send" status="primary">Send to station</cds-button>-->
               <cds-button id="btnRef" status="primary" tabindex="0" role="button" action="solid" size="md" loading-state="default" aria-disabled="false">Reference</cds-button>
             </div>
           </div>
+          -->
         </div>
 
       </div>

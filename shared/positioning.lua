@@ -315,6 +315,15 @@ function M.StopTasks(JobName)
     M.curtask.task = ''
 end
 
+function M.Shutdown()
+    -- M.StopTask(M.tracking, JobName)
+    for tool,chn in pairs(M.channels) do
+        if chn.drv.Shutdown then
+            chn.drv.Shutdown(chn)
+        end
+    end
+end
+
 M.save_reference = function(x, y)
     -- TODO: forward to actual driver
 end
@@ -389,11 +398,19 @@ local function OnWorkflowStateChanged(info)
 
 end
 
+-- Shutdown hook - make sure to call the ART close() function to cleanup everything
+local function OnStateShutdown()
+    M.Shutdown()
+end
+
 if StateChangedFunctions ~= nil then
 	StateChangedFunctions.add(OnWorkflowStateChanged)
 end
 if StatePollFunctions ~= nil then
 	StatePollFunctions.add(OnStatePoll)
+end
+if StateShutdownFunctions ~= nil then
+	StateShutdownFunctions.add(OnStateShutdown)
 end
 
 ----------------------------------------------------------------------------

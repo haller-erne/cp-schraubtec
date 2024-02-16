@@ -25,7 +25,19 @@ M.Init = function(chn)
         M.dev, ret = api.open(tbl.IP, tbl.PORT)
         if not M.dev then
             SetLuaAlarm('ART', -2, string.format('AR-Tracking: Failed to open the API, error: %s!', tostring(ret)))
-            error('Opening ART interface failed: '..ret)
+            --error('Opening ART interface failed: '..ret)
+            M.dev = {   -- mock the interface for testing
+                add_tool = function() return true end,
+                set_tool_offset = function() return true end,
+                get_status = function() return 0, 'ok' end,
+                set_workspace = function() return true end,
+                add_position = function() return true end,
+                del_position_list = function() return true end,
+                start = function() return true end,
+                stop = function() return true end,
+                find_position = function() return nil, 'simulated' end,
+                close = function() return true end
+            }
         end
     end
     chn.mod = {}
@@ -40,6 +52,14 @@ M.Init = function(chn)
     end
     chn.mod.cfg = cfg
     return nil -- OK!
+end
+
+M.Shutdown = function(chn)
+    if M.dev ~= nil then
+        M.dev:close()
+        api.exit()
+        M.dev = nil
+    end
 end
 
 M.UpdatePos_Abs3D = function(chn, x, y, z, rx, ry, rz)
@@ -155,9 +175,6 @@ end
 --    nil, error    if no position is available
 M.GetCurrentToolPos = function(chn, expectedpos)
 
-    -- TODO: check status
-    -- int status, err = M.dev:get_status()
-
     local inpos, pos  = M.dev:find_position(chn.chn)
     if pos ~= nil then
         --if pos.dirx then pos.dirx = 1000 * pos.dirx end
@@ -181,7 +198,15 @@ M.GetCurrentToolPos = function(chn, expectedpos)
         if global_set_inpos then
             global_set_inpos(0)
         end
-        return nil, pos -- pos is now an error string!
+        -- read the detailed error status
+        local code, msg = M.dev:get_status()
+        if code and msg then
+            -- we have a detailed status code
+            return nil, msg
+        else
+            -- no detailed status code available - use the error code
+            return nil, pos -- pos is now an error string!
+        end
     end
 
 --[[

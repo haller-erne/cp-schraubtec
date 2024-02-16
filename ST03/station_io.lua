@@ -49,25 +49,28 @@ enip_io.OnDataChanged = function(dev)
         P[2].PQI = dev.data.i:sub(6+1, 7+1)
         P[2].i = dev.data.i:sub(44+1, 44+32)
         M.data.distance = struct.unpack("<h", P[2].i)
-        -- IFM JN2200 2D tilt sensor
+        -- Startgriff IO-Link
         P[3].PQI = dev.data.i:sub(8+1, 9+1)
         P[3].i = dev.data.i:sub(76+1, 76+32)
-        local x, y = struct.unpack("<hh", P[3].i)
-        M.data.tilt_x = x/100
-        M.data.tilt_y = y/100
+        local b1, b2, b3, b4 = struct.unpack("<BBBB", P[3].i)
+        --local x, y = struct.unpack("<hh", P[3].i)
+        M.data.tilt_x = 0
+        M.data.tilt_y = 0
+        M.data.io = {}
+        local io = M.data.io
+        io.ccwsel = bit32.band(b3, 0x08)
+        io.cwsel  = bit32.band(b3, 0x10)
+        io.sensor = bit32.band(b3, 0x04)
+        io.axial  = bit32.band(b3, 0x01)
+        io.radial = bit32.band(b3, 0x02)
+        io.blue   = bit32.band(b3, 0x20)
+        io.black  = bit32.band(b3, 0x40)
         -- IFM AL2321 Port 4 digital I/O module
         P[4].PQI = dev.data.i:sub(10+1, 11+1)
         P[4].i = dev.data.i:sub(108+1, 108+32)
         local b1, b2, b3, b4 = struct.unpack("<BBBB", P[4].i)
-        M.data.io = {}
-        local io = M.data.io
-        io.ccwsel = bit32.band(b4, 0x10)
-        io.cwsel  = bit32.band(b3, 0x10)
-        io.sensor = bit32.band(b4, 0x02)
-        io.axial  = bit32.band(b3, 0x01)
-        io.radial = bit32.band(b4, 0x01)
-        io.blue   = bit32.band(b4, 0x04)
-        io.black  = bit32.band(b3, 0x04)
+        io.socket1 = bit32.band(b4, 0x40)
+        io.socket2 = bit32.band(b4, 0x80)
         for i = 1,4 do
             -- TODO: throw alarm, if any of the IO-link ports report an error!
             local Q = P[i]
@@ -78,9 +81,12 @@ enip_io.OnDataChanged = function(dev)
             --    XTRACE(16, string.format("P%d: input now %s", i, basexx.to_hex(P.i)))
             --end
         end
-        if P[4].i ~= P[4].i_old then
-            XTRACE(16, string.format("P4: input now %s", basexx.to_hex(P[4].i)))
-        end
+        --if P[3].i ~= P[3].i_old then
+        --    XTRACE(16, string.format("P3: input now %s", basexx.to_hex(P[3].i)))
+        --end
+        --if P[4].i ~= P[4].i_old then
+        --    XTRACE(16, string.format("P4: input now %s", basexx.to_hex(P[4].i)))
+        --end
 
         -- update dependencies
         if P[1].i ~= P[1].i_old or P[2].i ~= P[2].i_old or P[3].i ~= P[3].i_old then
@@ -90,8 +96,11 @@ enip_io.OnDataChanged = function(dev)
             -- update the tool tracking - we use tool 3 connected to the len/rot sensors
             positioning.UpdatePos_RotIncLenAbs(3, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
         end
+        if P[3].i ~= P[3].i_old then
+            XTRACE(16, string.format("P3: CCWSel=%d, CWSel=%d, StartRad=%d, StartAx=%d, Anw=%d", io.ccwsel, io.cwsel, io.radial, io.axial, io.sensor))
+        end
         if P[4].i ~= P[4].i_old then
-            XTRACE(16, string.format("P4: CCWSel=%d, CWSel=%d, Start=%d, Anw=%d", io.ccwsel, io.cwsel, io.radial, io.sensor))
+            XTRACE(16, string.format("P4: Socket1=%d, Socket2=%d", io.socket1, io.socket2))
         end
 
     elseif dev.cfg.name == 'IOLINK_CARBO' then
@@ -106,7 +115,7 @@ enip_io.OnDataChanged = function(dev)
         P[1].i = dev.data.i:sub(12+1, 12+32)
         local h, l = struct.unpack("<hH", P[1].i)
         M.data.rotation = l     -- don't care about the high word
-        XTRACE(16, string.format("%s: ROT: %s", dev.cfg.name, basexx.to_hex(P[1].i)))
+        --XTRACE(16, string.format("%s: ROT: %s", dev.cfg.name, basexx.to_hex(P[1].i)))
         -- Wenglor P1PY101 laser distance sensor
         P[2].PQI = dev.data.i:sub(6+1, 7+1)
         P[2].i = dev.data.i:sub(44+1, 44+32)
@@ -158,13 +167,14 @@ local function OnStatePoll(info)
     -- cyclically update the OpenProtocol I/O data
     if M.data.io ~= nil then
         local io = M.data.io
-        if io.radial > 0 and io.ccwsel > 0 then
+        if (io.radial > 0 or io.axial > 0) and io.ccwsel > 0 then
             output = 0x80
-        elseif io.radial > 0 and io.cwsel > 0 then
+        elseif (io.radial > 0  or io.axial > 0) and io.cwsel > 0 then
             output = 0x40
         end
         if io.blue > 0 then output = output + 1 end
         if io.black > 0 then output = output + 2 end
+        if io.ccwsel > 0 then output = output + 4 end
     end
     -- Only tool3 supports I/O
     local input, err = ToolIOExchange(3, output)

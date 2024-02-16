@@ -9,7 +9,7 @@ requires = {
 	"usb_button",
 	--"user_manager",
 	--"positioning_enip_iolink",
-	--"custom",
+	"custom",
 	--"resultdata",
 	"custom_nok_handling",
 	"lua_tool_delay",

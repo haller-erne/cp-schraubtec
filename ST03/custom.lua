@@ -2,8 +2,31 @@
 
 -- do not show the "return all tools to the socket tray" message
 function CheckExternalConditions(secondsRunning, socket, state)
-    return 0
+    return 0 -- don't wait for return sockets back on end of process
+--[[
+    if 0 == Socket then 
+        return 0 -- don't wait for return sockets back on end of process
+    end  
+    if 0 ~= Socket then 
+        return 1 -- show notification
+    else
+	    return 2 -- wait   while secondsRunning < 5
+    end
+]]--     
 end
+
+--[[
+local oldEvaluateExternalIO = EvaluateExternalIO
+function EvaluateExternalIO(Tool, Socket, Inputs, Outputs, Pos)
+
+    -- tool 3 has custom socket tray
+    if Tool == 3 then
+    else
+        return oldEvaluateExternalIO(Tool, Socket, Inputs, Outputs, Pos)
+    end
+end
+]]--
+
 
 ---------------------------------------------------------------------------------------
 -- webbrowser stuff

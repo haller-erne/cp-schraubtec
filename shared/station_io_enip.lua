@@ -175,7 +175,8 @@ local function trim(s)
 end
 local function empty(n)
     local s = ''
-    for i = 1,n do s = s .. '\x00' end
+    --for i = 1,n do s = s .. '\x00' end
+    for i = 1,n do s = s .. string.char(0) end
     return s
 end
 -----------------------------------------------------------------------------------------
@@ -237,6 +238,7 @@ local function read_ini_params(inisection)
                 i = empty(cfg.fwo.TO_Size),
                 q = empty(cfg.fwo.OT_Size)
             }
+            dev[name].ctx:write_cyclic_io(0, dev[name].data.q)
         end
     end
     return dev
