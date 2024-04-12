@@ -56,6 +56,9 @@ enip_io.OnDataChanged = function(dev)
         --local x, y = struct.unpack("<hh", P[3].i)
         M.data.tilt_x = 0
         M.data.tilt_y = 0
+        M.data.nv_x = 0
+        M.data.nv_y = 0
+        M.data.nv_z = 1
         M.data.io = {}
         local io = M.data.io
         io.ccwsel = bit32.band(b3, 0x08)
@@ -94,7 +97,7 @@ enip_io.OnDataChanged = function(dev)
                 dev.cfg.name, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y))
             -- make them mm and degrees?
             -- update the tool tracking - we use tool 3 connected to the len/rot sensors
-            positioning.UpdatePos_RotIncLenAbs(3, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
+            positioning.UpdatePos_RotIncLenAbs(3, M.data.rotation, M.data.distance, M.data.nv_x, M.data.nv_y, M.data.nv_z)
         end
         if P[3].i ~= P[3].i_old then
             XTRACE(16, string.format("P3: CCWSel=%d, CWSel=%d, StartRad=%d, StartAx=%d, Anw=%d", io.ccwsel, io.cwsel, io.radial, io.axial, io.sensor))
@@ -126,6 +129,15 @@ enip_io.OnDataChanged = function(dev)
         local x, y = struct.unpack("<hh", P[3].i)
         M.data.tilt_x = x/100
         M.data.tilt_y = y/100
+        -- convert tilt angle to normal vector
+        local lx = math.sin(math.pi*M.data.tilt_x/180)
+        local ly = math.sin(math.pi*M.data.tilt_y/180)
+        --local lz = 1
+        local l = math.sqrt(lx*lx+ly*ly+1)
+        M.data.nv_x = lx/l
+        M.data.nv_y = ly/l
+        M.data.nv_z = 1/l
+
         -- IFM AL2321 Port 4 digital I/O module
         P[4].PQI = dev.data.i:sub(10+1, 11+1)
         P[4].i = dev.data.i:sub(108+1, 108+32)
@@ -147,9 +159,52 @@ enip_io.OnDataChanged = function(dev)
                 dev.cfg.name, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y))
             -- make them mm and degrees?
             -- update the tool tracking - we use tool 3 connected to the len/rot sensors
-            positioning.UpdatePos_RotIncLenAbs(4, M.data.rotation, M.data.distance, M.data.tilt_x, M.data.tilt_y, 0)
+            positioning.UpdatePos_RotIncLenAbs(4, M.data.rotation, M.data.distance, M.data.nv_x, M.data.nv_y, M.data.nv_z)
         end
     end
+end
+
+---------------------------------------------------------------------------------------
+local lua_mstkn_group  = 2
+local lua_mstkn_socket = 0 
+
+function SetLuaSocket(group,socket)
+	if group ~= lua_mstkn_group then return false end
+	lua_mstkn_socket = socket
+	return true
+end
+------------------------------------------
+-- return values:
+-- < 0 -> invalid group
+-- = 0 -> no selection
+-- > 0 -> selected socket
+function GetLuaSocket(group)
+	if group == lua_mstkn_group then
+        -- check I/O if correct
+        local io = M.data.io
+        if io then
+            if io.socket1 == 0 then
+                return 1
+            end
+            if io.socket2 == 0 then
+                return 2
+            end
+        end
+		return 0    -- no selection
+	end 
+	return -1 -- invalid group
+end
+-------------------------------------------
+-- return values:
+-- msACTIVE 		= 0
+-- msTIMEOUT		= 1
+-- msBAD_PORT 		= 2
+-- msSUSPENDED 		= 3
+-- msACCEPT_ERROR 	= 4
+-- msINVALID_DATA 	= 5
+-- msWIN32FAIL 		= 6
+function GetLuaSocketState(group)
+	return 0 -- msACTIVE
 end
 
 ---------------------------------------------------------------------------------------

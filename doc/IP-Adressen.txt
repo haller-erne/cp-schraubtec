@@ -50,8 +50,17 @@ Station 4 (ART): 192.168.1.80 – 192.168.1.99
 -	192.168.1.91-98: Reserve
 -	192.168.1.99: Access-Point für WLan-Teilnehmer der Station
 
+Station 5 (GWK-Nacharbeitswagen): 192.168.1.100 – 192.168.1.119
+-	192.168.1.100: OGS-Laptop
+-	192.168.1.101: GWK Operator #1
+-	192.168.1.102: GWK Operator #2
+-	192.168.1.103: GWK Operator #3
+-	192.168.1.104-18: Reserve
+-	192.168.1.119: Access-Point für WLan-Teilnehmer der Station
+
+
 Gemeinsame Infrastruktur (PC für ActiveCockpit): 192.168.1.100 – 192.168.1.253
--	192.168.1.100: Zentraler PC (ActiveCockpit)
--	192.168.1.101: Zentraler PC (h+e Sys3xxGateway, QualityR, MQTT-Broker und NodeRED)
+-	192.168.1.200: Zentraler PC (ActiveCockpit)
+-	192.168.1.201: Zentraler PC (h+e Sys3xxGateway, QualityR, MQTT-Broker und NodeRED)
 -	192.168.1.254: zentraler Router (falls nötig für Internetzugriff, ggf. AccessPoint für stationsunabhängige WLan-Teilnehmer)
 

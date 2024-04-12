@@ -218,4 +218,13 @@ M.UpdatePos_Abs3D = function(chn, x, y, z, rx, ry, rz)
     return nil, 'not implemented!'
 end
 
+-- Get current position
+-- Return:
+--    pos, inpos    inpos = 0/1 or nil (if inpos is external)
+--    nil, error    if no position is available
+function M.GetCurrentToolPos(chn, expectedpos)
+
+    return chn.pos, nil     -- let the global functin detect the "inpos" state
+end
+
 return M
