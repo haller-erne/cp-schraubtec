@@ -17,6 +17,7 @@ requires = {
 	--"station_io",
 	-- "lua_tool_mqtt",
 	"sim",
+	"web_workflow"
 }
 current_project.logo_file = 'logo-gwk.png'
 current_project.billboard = 'http://127.0.0.1:59990/billboard.html'

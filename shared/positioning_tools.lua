@@ -48,6 +48,27 @@ function M.get_dev_params(section, name, tbl)
     return params
 end
 
+-- calc angle deviation (in degrees)
+M.calc_angle_dev = function(curpos, exppos)
+    -- Winkelabweichung zwischen den zwei Einheitsvektoren berechnen
+    -- Theoretisch sollte das Skalarprodukt zwischen zwei Einheitsvektoren
+    -- immer einen Wert zwischen -1 und 1 haben, aber wegen Rundung kann
+    -- die Länge auch größer 1 werden --> dann schlägt acos fehl...
+    local p1 = curpos
+    local p2 = exppos
+    local len1 = p1.dirx * p1.dirx + p1.diry * p1.diry + p1.dirz * p1.dirz
+    local len2 = p2.dirx * p2.dirx + p2.diry * p2.diry + p2.dirz * p2.dirz
+    local snen = p1.dirx * p2.dirx + p1.diry * p2.diry + p1.dirz * p2.dirz
+    local ok, szal = pcall(math.sqrt(len1) * math.sqrt(len2))
+    if not ok or szal == 0 then szal = 1 end
+    local sp = snen / szal
+    if (sp > 1) then sp = 1 end     -- rounding errors
+    if (sp < -1) then sp = -1 end   -- rounding errors
+    local rad = math.acos(sp)
+    local deg = 180 * (rad / math.pi)
+    return deg
+end
+
 -- return inpos, distx, disty, distz, dax, day, daz
 M.calc_distance_sphere = function(curpos, exppos)
     -- compare current and learned positions
@@ -57,8 +78,16 @@ M.calc_distance_sphere = function(curpos, exppos)
 
     -- check, if the current position is within our cylinder
     local distxyz = (dif_x*dif_x) + (dif_y*dif_y) + (dif_z*dif_z)
-    local inpos = (distxyz <= (exppos.r1*exppos.r1))
+    local inpos_xyz = (distxyz <= (exppos.r1*exppos.r1))
     -- currently, we don't care about the Z position!
+
+    -- check the angle distance
+    local inpos_rad = true
+    if exppos.angle and exppos.angle > 0 then
+        local distdeg = M.calc_angle_dev(curpos, exppos)        
+        inpos_rad = (distdeg <= exppos.angle)
+    end
+    local inpos = inpos_xyz and inpos_rad
 
     -- for a sphere, there is no need to check the angle
     return inpos, dif_x, dif_y, dif_z, 0, 0, 0
@@ -84,8 +113,8 @@ M.calc_distance_cylinder = function(curpos, exppos)
     -- check the angle distance
     local inpos_rad = true
     if exppos.angle and exppos.angle > 0 then
-        local distrad = (dif_rx*dif_rx) + (dif_ry*dif_ry)
-        inpos_rad = (distrad <= (exppos.angle*exppos.angle))
+        local distdeg = M.calc_angle_dev(curpos, exppos)        
+        inpos_rad = (distdeg <= exppos.angle)
     end
     local inpos = inpos_xyz and inpos_rad
 
