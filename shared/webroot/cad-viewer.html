@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="utf-8"/>
+  <title>OGS CAD-Viewer</title>
+  <!--- Link to the last version of BabylonJS --->
+  <!-- see https://doc.babylonjs.com/babylon101/how_to_get for available libraries -->
+  <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+  <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+  <!--<script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>-->
+  <style>
+    html, body {
+        overflow: hidden;
+        width   : 100%;
+        height  : 100%;
+        margin  : 0;
+        padding : 0;
+    }
+
+    #renderCanvas {
+        width   : 100%;
+        height  : 100%;
+        touch-action: none;
+    }
+
+    /* Force the viewer to have a specific size. This can be changed, of course. */
+    babylon {
+        width: 100%;
+        height: 100%;
+    }
+  </style>
+
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+  <script>
+    OGS = {};
+    OGS.onInit = function(url) {
+        console.log("OGS.onInit called: ", url, OGS);
+        OGS.SendCmd('{ "cmd":"get-config" }');
+    }
+    OGS.onShow = function OGS_onShow() {
+        console.log("OGS.onShow called!");
+    }
+    OGS.onHide = function() {
+        console.log("OGS.onHide called!");
+    }  
+/* Animated glow effect in a hihglight layer
+// see: https://playground.babylonjs.com/#S47Z83#1
+
+var createScene = async function () {
+    var scene = new BABYLON.Scene(engine);
+
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    camera.setTarget(BABYLON.Vector3.Zero());
+    camera.attachControl(canvas, true);
+
+    var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.7;
+
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere1", {diameter: 4}, scene);    
+	
+	// Add the highlight layer
+	var hl = new CustomHighlightLayer("hl1", scene);    
+	hl.addMesh(sphere, BABYLON.Color3.Yellow());    
+
+    // Oscillate the intensity from 0 to 1
+    var alpha = 0;
+    scene.registerBeforeRender(() => {
+        alpha += 0.3;
+        hl.intensity = 0.8 + Math.cos(alpha) * 0.2;
+    });
+
+    return scene;
+
+};
+*/
+    // Subclass HighlightLayer to add the "intensity" property
+    class CustomHighlightLayer extends BABYLON.HighlightLayer {
+        intensity = 1;
+
+        _createMergeEffect () {
+            BABYLON.ShaderStore.ShadersStore.customGlowMapMergeVertexShader = BABYLON.ShaderStore.ShadersStore.glowMapMergeVertexShader;
+            
+            let pixelShader = BABYLON.ShaderStore.ShadersStore.glowMapMergePixelShader;        
+            pixelShader = pixelShader.replace("#define CUSTOM_FRAGMENT_DEFINITIONS", "uniform float intensity;");
+            pixelShader = pixelShader.replace("#define CUSTOM_FRAGMENT_MAIN_END", "gl_FragColor*=intensity;");
+            BABYLON.ShaderStore.ShadersStore.customGlowMapMergePixelShader = pixelShader;        
+
+            return this._engine.createEffect("customGlowMapMerge", [BABYLON.VertexBuffer.PositionKind], ["offset", "intensity"], ["textureSampler"], this._options.isStroke ? "#define STROKE \n" : undefined);
+        }
+
+        _internalRender (effect, renderIndex) {
+            effect.setFloat("intensity", this.intensity);
+            super._internalRender(effect, renderIndex);
+        }
+    }
+
+
+
+    window.addEventListener('DOMContentLoaded', function(){
+        // get the canvas DOM element
+        var canvas = document.getElementById('renderCanvas');
+
+        // load the 3D engine
+        var engine = new BABYLON.Engine(canvas, true, { stencil: true });
+        var scene = null;
+        var lastJobSeq = 0;
+        var lastJobNum = 0;
+        var hl = null;
+        var hlCur = null;    // current bolt
+        var hlOk = null;      // all ok bolts
+        var hlNok = null;    // all nok bolts
+
+        globalThis.UpdateConfig = function(valStr)
+        {
+          let val = JSON.parse(valStr);
+          console.log("UpdateConfig:", val);
+          //var e = document.getElementById("version");
+          //e.textContent = val;
+          OGS.SendCmd('{ "cmd":"get-data" }');
+        }
+        globalThis.UpdateData = function(valStr)
+        {
+          let val = JSON.parse(valStr);
+          console.log("UpdateData:", val);
+          //var e = document.getElementById("version");
+          //e.textContent = val;
+          let jobChanged = false;
+          if (lastJobNum != val.curJob.Num  || lastJobSeq != val.curJobSeq) {
+            jobChanged = true;
+            lastJobNum = val.curJob.Num;
+            lastJobSeq = val.curJobSeq;
+            // clear the highlights
+            hl.removeAllMeshes();
+            hlOk.removeAllMeshes();
+            hlNok.removeAllMeshes();
+            hlCur.removeAllMeshes();
+          }
+          var highlightNode = function(layer, node, color) {
+            for (const mesh of node.getChildMeshes()) {
+              var hasMesh = layer.hasMesh(mesh);
+              if (color != null) {
+                if (!hasMesh) {
+                  layer.addMesh(mesh, color); // BABYLON.Color3.Green()
+                  //mesh.enableEdgesRendering();
+                  //mesh.edgesWidth = 4.0;
+                  //mesh.edgesColor = new BABYLON.Color4(0, 0, 1, 1);
+                }
+              }
+              else {
+                  layer.removeMesh(mesh);
+                  //mesh.disableEdgesRendering();
+              }
+            }
+          }
+			
+          val.jobs.forEach((item, idx) => {
+            var enable = (idx+1 <= val.curJobSeq);   // 0-based arrray, 1-based job sequence
+            var fn = scene.getNodeByName(item.RawName);       // "Deckel:1"
+            if (fn) {
+              //if (fn.isEnabled()) {
+              //	if (!enable) fn.setEnabled(false);
+              //} else {
+              //	if (enable) fn.setEnabled(true);
+              //}
+              if (!enable) {
+                fn.setEnabled(false);
+              } else {
+                fn.setEnabled(true);
+              }
+			  if (idx+1 == val.curJobSeq) {   // the currently active job
+				  // update the highlight layers
+				  console.log("highlighting...", val.curJob.Tasks);
+          for (var i = 0; i < val.curJob.Tasks.length; i++) {
+            let task = val.curJob.Tasks[i];
+					  console.log("  :", task)
+					  let isCur = (val.curBoltSeq == (i+1));
+					  let isOk  = (task.State == 1);
+					  let isNok = (task.State == 2);
+				    let isNA  = (task.State == 4) && !isCur;  // do not mark the "current" as todo.
+            let node = scene.getNodeByName(task.Name);
+					  if (node) {
+					    highlightNode(hl,    node, isNA  ? BABYLON.Color3.Blue() : null);
+					    highlightNode(hlCur, node, isCur ? BABYLON.Color3.Yellow() : null);
+					    highlightNode(hlOk,  node, isOk  ? BABYLON.Color3.Green() : null);
+					    highlightNode(hlNok, node, isNok ? BABYLON.Color3.Red() : null);
+					  }
+          }/*
+				  val.curJob.Tasks.foreach((task, idxTask) => {
+					  console.log("  ->", task)
+					  let isCur = (val.curBoltSeq == (idxTask+1));
+					  let isOk  = (task.State == 1);
+					  let isNok = (task.State == 2);
+				    let isNA  = (task.State == 4) && !isCur;  // do not mark the "current" as todo.
+            let node = scene.getNodeByName(task.Name);
+					  if (node) {
+					    highlightNode(hl,    node, isNA  ? BABYLON.Color3.Blue() : null);
+					    highlightNode(hlCur, node, isCur ? BABYLON.Color3.Yellow() : null);
+					    highlightNode(hlOk,  node, isOk  ? BABYLON.Color3.Green() : null);
+					    highlightNode(hlNok, node, isNok ? BABYLON.Color3.Red() : null);
+					  }
+				  });*/
+			  }
+            }
+          }); 
+          //var fn = scene.getNodeByName("Deckel:1");
+          //fn.position.z = 2;          // lift the lid a bit...
+          //fn.setEnabled(true);       // hide from view
+        }        
+
+        var createLabel = function(mesh) {
+            var label = new BABYLON.GUI.Rectangle("label for " + mesh.name);
+            label.background = "black"
+            label.height = "30px";
+            label.alpha = 0.5;
+            label.width = "100px";
+            label.cornerRadius = 20;
+            label.thickness = 1;
+            label.linkOffsetY = 30;
+            advancedTexture.addControl(label); 
+            label.linkWithMesh(mesh);
+
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.text = mesh.name;
+            text1.color = "white";
+            label.addControl(text1);  
+        }  
+
+        // createScene function that creates and return the scene
+        var createScene = function(){
+          console.log("Creating scene...");
+
+/*                
+            // create a basic BJS Scene object
+            var scene = new BABYLON.Scene(engine);
+
+            // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+            var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5,-10), scene);
+
+            // target the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+
+            // attach the camera to the canvas
+            camera.attachControl(canvas, false);
+
+            // create a basic light, aiming 0,1,0 - meaning, to the sky
+            var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
+
+            // create a built-in "sphere" shape; its constructor takes 6 params: name, segment, diameter, scene, updatable, sideOrientation 
+            var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
+
+            // move the sphere upward 1/2 of its height
+            sphere.position.y = 1;
+
+            // create a built-in "ground" shape;
+            var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+
+            // return the created scene
+            return scene;
+*/                
+            scene = new BABYLON.Scene(engine);
+
+            // add some highlight layers:
+            hl = new BABYLON.HighlightLayer("hl1", scene);
+	          //hlCur = new BABYLON.HighlightLayer("hlCur", scene);    // current bolt
+            hlCur = new CustomHighlightLayer("hlCur", scene);    
+            hlOk = new BABYLON.HighlightLayer("hlOk", scene);      // all ok bolts
+            hlNok = new BABYLON.HighlightLayer("hlNok", scene);    // all nok bolts
+
+            //// Parameters: alpha, beta, radius, target position, scene
+            //var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
+            //// Positions the camera overwriting alpha, beta, radius
+            //camera.setPosition(new BABYLON.Vector3(0, 0, 20));
+
+            // Add a camera to the scene and attach it to the canvas
+            var camera = new BABYLON.ArcRotateCamera(
+                "Camera",
+                Math.PI / 2,
+                Math.PI / 4,
+                50,
+                BABYLON.Vector3.Zero(),
+                scene
+            );
+            camera.attachControl(canvas, true);
+            camera.useFramingBehavior = true;
+
+            // create a basic light, aiming 0,1,0 - meaning, to the sky
+            var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene);
+
+            // Create the UI (see https://doc.babylonjs.com/how_to/gui)
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("ui1");
+            //   Stackpanel (vertical by default)
+            var panel = new BABYLON.GUI.StackPanel();  
+            panel.width = 0.25;
+            panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            advancedTexture.addControl(panel);
+
+            var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Explode");
+            button1.width = "150px"
+            button1.height = "40px";
+            button1.color = "white";
+            button1.cornerRadius = 20;
+            button1.background = "green";
+            //button1.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+            //button1.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+            // Add event handler (see below)
+            //button1.onPointerUpObservable.add(function() {
+            //    alert("you did it!");
+            //});
+            //advancedTexture.addControl(button1);    
+            panel.addControl(button1);    
+            var buttonExploded = false;
+
+            var button2 = BABYLON.GUI.Button.CreateSimpleButton("but2", "View!");
+            button2.width = "150px"
+            button2.height = "40px";
+            button2.color = "white";
+            button2.cornerRadius = 20;
+            button2.background = "green";
+            panel.addControl(button2);    
+
+            var button3 = BABYLON.GUI.Button.CreateSimpleButton("but", "Inspector");
+            button3.width = "150px"
+            button3.height = "40px";
+            button3.color = "white";
+            button3.cornerRadius = 20;
+            button3.background = "green";
+            panel.addControl(button3);
+            var buttonInspector = false;
+
+            // The first parameter can be used to specify which mesh to import. Here we import all meshes
+            BABYLON.SceneLoader.Append(
+              // "https://raw.githubusercontent.com/ogsadmin/demo-rexroth-sales/master/ww_hh/graphics/", 
+              "",
+                "batterypack2.glb",
+                //"mstkn.glTF", 
+                scene, 
+                function (newMeshes) {
+//                        scene.createDefaultCameraOrLight(true);
+//                        scene.activeCamera.attachControl(canvas, false);
+//                        scene.activeCamera.alpha += Math.PI; // camera +180°
+
+                    // MeshExploder, siehe: https://doc.babylonjs.com/how_to/how_to_use_meshexploder
+                    var newExplosion = new BABYLON.MeshExploder(newMeshes.meshes);
+                    //newExplosion.explode(2); // NOTE: explode(0) resets :-)
+
+                    // the actual nodes: var tn = scene.transformNodes;
+                    var fn = scene.getNodeByName("Deckel:1");
+                    //var m = newMeshes.getMeshByName("Deckel:1"); //Frontplattelinks");
+                    //m.scaling.scaleInPlace(1.5);
+                    //m.position.y = 0.05;
+//                    fn.position.z = 2;          // lift the lid a bit...
+                    fn.setEnabled(false);       // hide from view
+
+                    //newMeshes.meshes[0].scaling.scaleInPlace(0.1)
+                    //newMeshes.meshes[0].position.z = 5
+                    //newMeshes.meshes[0].position.y = -1
+
+                    // attach a label - see the GUI sample (but does not seem to work right here?)
+                    //createLabel(newMeshes.getMeshByName("Frontplattelinks"));
+
+                    // Define a highliter function (also works on transformNodes, see https://forum.babylonjs.com/t/renderoutline-and-highlightlayer-has-question-on-transformnode/41016)
+                    var highlighFn = function(node) {
+                        for (const mesh of node.getChildMeshes()) {
+                            if (hl.hasMesh(mesh)) {
+                                hl.removeMesh(mesh);
+                                mesh.disableEdgesRendering();
+                            }
+                            else {
+                                hl.addMesh(mesh, BABYLON.Color3.Green());
+                                mesh.enableEdgesRendering();
+                                mesh.edgesWidth = 4.0;
+                                mesh.edgesColor = new BABYLON.Color4(0, 0, 1, 1);
+                            }
+                        }
+                    }
+                    //highlighFn(fn);
+                    
+                    // Add a picker to highlight a mesh (not working on transformNode!!!)
+/*                        
+                    let node = fn;
+                    node.actionManager = new BABYLON.ActionManager(scene);
+                    node.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnLeftPickTrigger, (function(node) {
+                        console.log("%c ActionManager: left pick: " + node.name, 'background: green; color: white');
+                        // highlight: see https://doc.babylonjs.com/how_to/highlight_layer
+                        highlighFn(node);
+                    }).bind(this, node)));
+*/
+                    // add a global click handler (see https://playground.babylonjs.com/#ABDDD6#47)
+                    scene.onPointerObservable.add((e) => {
+                        if (e.type == BABYLON.PointerEventTypes.POINTERDOWN) {
+                            if (e.pickInfo.hit && e.pickInfo.pickedMesh !== null) {
+                                console.log(e.pickInfo.pickedMesh.parent);
+                                if(e.pickInfo.pickedMesh.isDescendantOf(fn)) {      // our transformNode!
+                                    console.log("%c ActionManager: left pick: " + e.pickInfo.pickedMesh.name, 'background: green; color: white');
+                                    // highlight: see https://doc.babylonjs.com/how_to/highlight_layer
+                                    highlighFn(fn);
+                                }
+                            }
+                            else{
+                            }
+                        }
+                    });
+
+                    button1.onPointerUpObservable.add(function() {
+                        if (buttonExploded) {
+                            newExplosion.explode(0); // NOTE: explode(0) resets :-)
+                            buttonExploded = false;
+                        }
+                        else { 
+                            newExplosion.explode(2); // NOTE: explode(0) resets :-)
+                            buttonExploded = true;
+                        }
+                    });
+                    button2.onPointerUpObservable.add(function() {
+                      // "hard" page reload (for debugging)
+                      window.location.href = 'http://127.0.0.1:59990/cad-viewer.html?'+Date.now();
+                    });
+                    button3.onPointerUpObservable.add(function() {
+                        if (buttonInspector) {
+                            scene.debugLayer.hide();
+                            buttonInspector = false;
+                        }
+                        else { 
+                            // DEBUGGER!
+                            scene.debugLayer.show();
+                            buttonInspector = true;
+                        }
+                    });
+
+/*
+                    BABYLON.Animation.CreateAndStartAnimation("anim", m, "position", 30, 120,
+                    m.position, m.position.add(new BABYLON.Vector3(0, -0.1, 0)));
+*/
+/*
+                    //Create a Vector3 animation at 30 FPS
+                    var anim = new BABYLON.Animation("torusEasingAnimation", "position", 30, BABYLON.Animation.ANIMATIONTYPE_VECTOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+                    // Animation keys
+                    var keys = [];
+                    keys.push({ frame: 0, value: fn.position });
+                    keys.push({ frame: 120, value: fn.position.add(new BABYLON.Vector3(0, -0.05, 0)) });
+                    anim.setKeys(keys);
+                    // Creating an easing function
+                    var easingFunction = new BABYLON.CircleEase();
+                    // For each easing function, you can choose between EASEIN (default), EASEOUT, EASEINOUT
+                    easingFunction.setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEINOUT);
+                    // Adding the easing function to the animation
+                    anim.setEasingFunction(easingFunction);
+                    // Adding animation to my torus animations collection
+                    fn.animations.push(anim);
+*/
+                    var alpha = 0;
+                    scene.registerBeforeRender(() => {
+                        alpha += 0.2;
+                        hlCur.intensity = 0.8 + Math.cos(alpha) * 0.2;
+                    });
+
+                    //Finally, launch animations on node, from key 0 to key 120 with loop activated
+                    scene.beginAnimation(fn, 0, 120, true, 2.5);                        
+
+//                        //camera.setTarget(newMeshes[1]);
+//                        var cam = scene.activeCamera;
+//                        cam.setPosition(new BABYLON.Vector3(0, 0, 20));
+                    console.log("Scene loaded.");
+            });
+
+
+            // On pick interpolations
+            var prepareButton = function (mesh, color, light) {
+                var goToColorAction = new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPickTrigger, light, "diffuse", color, 1000, null, true);
+
+                mesh.actionManager = new BABYLON.ActionManager(scene);
+                mesh.actionManager.registerAction(
+                    new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPickTrigger, light, "diffuse", BABYLON.Color3.Black(), 1000))
+                    .then(new BABYLON.CombineAction(BABYLON.ActionManager.NothingTrigger, [ // Then is used to add a child action used alternatively with the root action. 
+                        goToColorAction,                                                 // First click: root action. Second click: child action. Third click: going back to root action and so on...   
+                        new BABYLON.SetValueAction(BABYLON.ActionManager.NothingTrigger, mesh.material, "wireframe", false)
+                    ]));
+                mesh.actionManager.registerAction(new BABYLON.SetValueAction(BABYLON.ActionManager.OnPickTrigger, mesh.material, "wireframe", true))
+                    .then(new BABYLON.DoNothingAction());
+                mesh.actionManager.registerAction(new BABYLON.SetStateAction(BABYLON.ActionManager.OnPickTrigger, light, "off"))
+                    .then(new BABYLON.SetStateAction(BABYLON.ActionManager.OnPickTrigger, light, "on"));
+            }
+
+            //prepareButton(m, BABYLON.Color3.Red(), light1);
+
+//                // see: https://doc.babylonjs.com/how_to/fast_build#fastest-build
+//                scene.createDefaultCameraOrLight(true, true, true);
+//                scene.createDefaultEnvironment();
+
+            return scene;
+        }
+
+        // call the createScene function
+        var scene = createScene();
+
+        // run the render loop
+        engine.runRenderLoop(function(){
+            scene.render();
+        });
+
+        // the canvas/window resize event handler
+        window.addEventListener('resize', function(){
+            engine.resize();
+        });
+    });
+  </script>
+</body>
+<script>
+console.log("loading...");
+/*
+window.onload = function DocLoaded() { 
+	console.log("document loaded.");
+}
+
+globalThis.UpdateConfig = function(valStr)
+{
+	let val = JSON.parse(valStr);
+	console.log("UpdateConfig:", val);
+	//var e = document.getElementById("version");
+	//e.textContent = val;
+}
+globalThis.UpdateData = function(valStr)
+{
+	let val = JSON.parse(valStr);
+	console.log("UpdateData:", val);
+	//var e = document.getElementById("version");
+	//e.textContent = val;
+}
+
+OGS = {};
+OGS.onInit = function(url) {
+	console.log("OGS.onInit called: ", url, OGS);
+	OGS.SendCmd('{ "cmd":"get-config" }');
+}
+OGS.onShow = function OGS_onShow() {
+	console.log("OGS.onShow called!");
+}
+OGS.onHide = function() {
+	console.log("OGS.onHide called!");
+}
+*/
+</script>
+</html>
