@@ -81,6 +81,62 @@ ethernet_devices.TURCK_AL1324 = {
 	Keying              = {},        	-- Electronic key segment
 }
 -------------------------------------------------------------------------------
+--          MURR Elektronik Impact 67 Pro-E 8-port I/O-Link master
+------------------------------------------------------------------------------
+ethernet_devices.MURR_IMPACT67_PROE = {
+    -- Connection path: 20 04 24 AA 2C 6F 2C 65 ==> E02 (DIO + IOLink(32B) + State/Diag)
+    --                           --                 Configuration assembly instance (0xAA), size=0...384
+    --                                 --           O -> T assembly instance (0x6F), Size=260, P2P, Run/Idle
+    --                                       --     T -> O assembly instance (0x65), Size=394, MC
+	--                                              --> Cyclic, exclusive owner
+    -- Connection path: 20 04 24 AB 2C 6F 2C 65 ==> WE02 (DIO + IOLink(32B) + State/Diag + http)
+    --                           --                 Configuration assembly instance (0xAB), size=0...384
+    --                                 --           O -> T assembly instance (0x6F), Size=260, P2P, Run/Idle
+    --                                       --     T -> O assembly instance (0x65), Size=394, MC
+	--                                              --> Cyclic, exclusive owner
+	-- Webserver login: admin	(password private)
+    --
+	-- O->T parameters: PLC --> Device, "PLC Outputs"
+    ---------------------------------------------------------------------------
+    -- Scanner to Target:
+	--ConnectionMode    OT_Mode;		-- Connection mode: default POINT2POINT
+	OT_Inst             = 0x6F,			-- O->T Instance ID
+	OT_Size             = 260,			-- O->T data size (in bytes)
+	--RealTimeFormat    OT_RTFormat;   	-- O->T Header/Heartbeat/Modeless/Zerolen
+	--Priority		    OT_Priority;
+	OT_ExclusiveOwner   = true,         -- true = exclusive owner
+	OT_VariableLength   = false,        -- true = variable length allowed
+    ---------------------------------------------------------------------------
+    -- Target to Scanner:
+	-- T->O parameters: Device -> PLC, "PLC Inputs"
+	TO_Mode             = 1,			-- connection mode: default MULTICAST, 0=NULL, 1=Multicast, 2=Point2Point
+	TO_Inst             = 0x65,			-- T->O Instance ID
+	TO_Size             = 394,			-- T->O data size (in bytes)
+	--RealTimeFormat	TO_RTFormat;    -- T->O Header/Heartbeat/Modeless/Zerolen
+	--Priority		TO_Priority;
+	TO_ExclusiveOwner   = true,         -- true = exclusive owner
+	TO_VariableLength   = false,        -- true = variable length allowed
+    ---------------------------------------------------------------------------
+	-- Configuration Assembly (optional)
+	Cfg_Inst            = 0xAB,        	-- 0xAA = http off, 0xAB = http enabled
+	Cfg_Data            = { },          -- 0 bytes of config data
+    ---------------------------------------------------------------------------
+	-- Startup parameter writes (optional) - only as workaround for (buggy) Rexroth devices
+	-- Parameters are given as a sequence of bytes for writing using SetAttributeSingle.
+	-- For each Par_Count elements, the following data must be provided:
+	-- 		[byte]	Class
+	--		[byte]	Instance
+	--		[byte]	Attr
+	--		[byte]	Number of data bytes to write
+	--		[bytes] [actual data bytes to write]
+	--
+	Par_Data            = {},  -- parameter data in the above format
+    ---------------------------------------------------------------------------
+	-- common parameters
+	Rate                = 50,			-- data rate in [ms]
+	Keying              = {},        	-- Electronic key segment
+}
+-------------------------------------------------------------------------------
 --          ROCKWELL ArmorBlock 1732E 16-port I/O block
 ------------------------------------------------------------------------------
 ethernet_devices.Rockwell_1732E = {
