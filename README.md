@@ -1,5 +1,7 @@
 # SchraubTec OGS Setup
 
+Aktuelle Informationen zu den Messen (Bilder, etc.) finden sich im Sharepoint: [https://hallererne.sharepoint.com/sites/SchraubTec/](https://hallererne.sharepoint.com/sites/SchraubTec/).
+
 Dieses Verzeichnis enthält die SchraubTec Demo-Setups für 4 Stationen:
 
 - Station 1: PTS/FMT
