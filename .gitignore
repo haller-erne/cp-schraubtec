@@ -1,0 +1,32 @@
+# Interbase/firebird databases
+*.fdb
+*.gdb
+*.gbk
+*.fbk
+*.fdc
+*.fds
+# note: we allow *.fbc here for automatic *.fdc/*.fds creation from backup
+
+# other (old) files
+GUID.txt
+
+# zips, backups, luarocks build files
+*.src.rock
+*.zip
+*.tar.gz
+
+# Compiled Lua sources
+luac.out
+
+# Shared objects (shouldn't be there anyway)
+*.dll
+*.so
+*.so.*
+*.dylib
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
