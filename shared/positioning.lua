@@ -31,9 +31,9 @@ local math = require('math')
 
 local drivers = {
     -- TODO: add position encoding, defaults, ... to driver
-    ART = require('positioning_ART'),
-    IO = require('positioning_IO'),
-    DIGITAL = require('positioning_DIGITAL'),
+--    ART = require('positioning_ART'),
+--    IO = require('positioning_IO'),
+--    DIGITAL = require('positioning_DIGITAL'),
 }
 
 -- allow adding/overriding driver modules
@@ -42,7 +42,10 @@ local drivers = {
 --   LoadDriverModule(name, module) to load <module>.lua and register it as <name>
 M.LoadDriverModule = function(name, module)
     if module == nil then module = name end
-    drivers[name] = require(module)
+    if drivers[name] == nil then
+        -- TODO: be nice and wrap it into a pcall - then throw a better error message (driver missing, ...)
+        drivers[name] = require(module)
+    end
 end
 
 -- new position info from hardware received
@@ -349,6 +352,9 @@ local function Init()
             if type(ini) ~= 'table' then
                 error(string.format('INI-section: "%s": section missing!', v))
             end
+            -- let's try to load the driver...
+            -- By default, we use a naming conventions as follows: Driver=ART --> require('positioning_ART'),
+            M.LoadDriverModule(ini.DRIVER, 'positioning_'..ini.DRIVER)
             if drivers[ini.DRIVER] ~= nil then
                 chn.cfg = ini
                 chn.drv = drivers[ini.DRIVER]
