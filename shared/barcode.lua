@@ -10,8 +10,8 @@ function Barcode_InitTable()
     --   .row       Display layout in OGS GUI, set row
     --   .with      Display layout in OGS GUI, set relative with (of all fields in the same row)
 	--
-	barcodes[1] = { name="Modell", len=4, required=1, desc="Type code", 	        row=1, width=8 }
-	barcodes[2] = { name="Serial", len=10, required=1, desc="vehicle ID number", 	row=1, width=19 }
+	barcodes[1] = { name="Modell (A-02/B-02)", len=4, required=1, desc="Type code", 	        row=1, width=8 }
+	barcodes[2] = { name="Serial (10-stellig)", len=10, required=1, desc="vehicle ID number", 	row=1, width=19 }
 
 	station = ReadIniValue('GENERAL', 'STATION')
 end
