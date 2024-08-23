@@ -19,7 +19,7 @@ Station 1 (PTS): 192.168.1.20 – 192.168.1.39
 -	192.168.1.34-38: Reserve
 -	192.168.1.39: Access-Point für WLan-Teilnehmer der Station
 
-Station 2 (GWK): 192.168.1.40 – 192.168.1.59
+Station 2 (GWK/TouchPC): 192.168.1.40 – 192.168.1.59
 -	192.168.1.40: OGS-PC
 -	192.168.1.41: Nexo
 -	192.168.1.42: GWK Operator 22
@@ -51,12 +51,13 @@ Station 4 (ART): 192.168.1.80 – 192.168.1.99
 -	192.168.1.91-98: Reserve
 -	192.168.1.99: Access-Point für WLan-Teilnehmer der Station
 
-Station 5 (GWK-Nacharbeitswagen): 192.168.1.100 – 192.168.1.119
+Station 5 (GWK-Nacharbeitswagen/FTS/FT1000): 192.168.1.100 – 192.168.1.119
 -	192.168.1.100: OGS-Laptop
 -	192.168.1.101: GWK Operator #1
 -	192.168.1.102: GWK Operator #2
 -	192.168.1.103: GWK Operator #3
 -	192.168.1.104-18: Reserve
+-	192.168.1.110: ART SmartTrack
 -	192.168.1.119: Access-Point für WLan-Teilnehmer der Station
 
 
