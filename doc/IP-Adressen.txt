@@ -31,10 +31,11 @@ Station 2 (GWK): 192.168.1.40 – 192.168.1.59
 
 Station 3 (JH): 192.168.1.60 – 192.168.1.79
 -	192.168.1.60: OGS-PC
--	192.168.1.61: CS351 (für ErgoSpin)
+-	192.168.1.61: CS351 (ErgoSpin HandyFlex)
 -	192.168.1.62: Nexo
--	192.168.1.63: GWK Operator 22
--	192.168.1.64-69: Reserve
+-	192.168.1.63: GWK Operator 22 / Opex
+-	192.168.1.64: CS351 (ErgoSpin Carbo-Arm)
+-	192.168.1.65-69: Reserve
 -	192.168.1.70: ART SmartTrack
 -	192.168.1.71: JH Handyflex (IO-Link Master)
 -	192.168.1.72-38: Reserve
