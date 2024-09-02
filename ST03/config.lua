@@ -17,6 +17,7 @@ requires = {
 	"station_io",
 	-- "lua_tool_mqtt",
 	"sim",
+	"heEventLogMqtt",
 }
 current_project.logo_file = 'JH.png'
 current_project.billboard = 'http://127.0.0.1:59990/billboard.html'
