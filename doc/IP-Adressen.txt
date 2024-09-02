@@ -41,11 +41,11 @@ Station 3 (JH): 192.168.1.60 – 192.168.1.79
 -	192.168.1.72-38: Reserve
 -	192.168.1.79: Access-Point für WLan-Teilnehmer der Station
 
-Station 4 (ART): 192.168.1.80 – 192.168.1.99
+Station 4 (ART): 192.168.1.80 – 192.168.1.99 (and currently 192.168.1.201 and 10.10.2.201)
 -	192.168.1.80: OGS-PC
--	192.168.1.81: Reserve
--	192.168.1.82: Nexo
--	192.168.1.83: GWK Operator 22
+-	192.168.1.81: CS351 (10.10.2.244)
+-	192.168.1.82: Nexo2
+-	192.168.1.83: Opex
 -	192.168.1.84-89: Reserve
 -	192.168.1.90: ART SmartTrack
 -	192.168.1.91-98: Reserve
